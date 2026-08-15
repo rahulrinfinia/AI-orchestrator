@@ -1,0 +1,17 @@
+# Slice status — update after each slice merges
+# status: pending | planned | in_progress | in_review | merged | blocked
+
+project: <project-name>
+updated: YYYY-MM-DD
+
+slices:
+  "1":
+    title: ""
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+  "2":
+    title: ""
+    status: pending
+    blocked_by: []

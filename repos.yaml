@@ -1,0 +1,22 @@
+# Register modular-monolith projects cloned into projects/<name>/
+#
+# Add a project:
+#   1. Create the app repo on GitHub (monorepo: src/ + backend/)
+#   2. Add an entry below
+#   3. Run: .\scripts\setup.ps1
+#
+# Fields:
+#   name     — folder under projects/
+#   repo     — git clone URL
+#   branch   — default branch to clone
+#   type     — modular-monolith (only type supported today)
+#   layout   — frontend path (repo root) and backend path
+
+projects:
+  - name: ipd
+    repo: https://github.com/rahulrinfinia/IPD.git
+    branch: main
+    type: modular-monolith
+    layout:
+      frontend: .
+      backend: backend/

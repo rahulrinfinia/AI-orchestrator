@@ -1,0 +1,27 @@
+# Cloned application repos (each has its own git history)
+/projects/*/
+
+# Keep directory structure
+!projects/.gitkeep
+
+# Design assets (large binaries — track links in prd/, not raw exports)
+**/design/exports/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Node / Python (workspace scripts only)
+node_modules/
+__pycache__/
+*.pyc
+.venv/
