@@ -1,22 +1,99 @@
-# Step-by-step — AI-driven development
+# Step-by-step — complete guide
 
-Follow these steps in order. Each step says **what you do**, **what you say in Cursor**, and **what appears in the hub**.
+**Start here.** This doc covers setup, features, tests, code review, PR review, who does what, and what to say at each step.
 
 Conceptual background: [ai-driven-development.md](ai-driven-development.md)  
-Command reference: [how-it-works.md](how-it-works.md)
+Folder layout + skills: [how-it-works.md](how-it-works.md)  
+Platform comparison: [platform-parity.md](platform-parity.md)
 
 ---
 
-## Before you start (one time)
+## Table of contents
+
+1. [Two layers — hub vs clone](#1-two-layers--hub-vs-clone)
+2. [Who does what](#2-who-does-what)
+3. [One-time setup](#3-one-time-setup)
+4. [Path A — New feature (full pipeline)](#path-a--new-feature-full-pipeline)
+5. [Path B — Small feature](#path-b--small-feature-short-pipeline)
+6. [Path C — Bug fix](#path-c--bug-fix)
+7. [Path D — Chore](#path-d--chore-deps-cleanup)
+8. [Path E — Hub only (no coding)](#path-e--hub-only-no-coding)
+9. [Path F — Onboard a new project](#path-f--onboard-a-new-project-eg-flowmd)
+10. [Path G — Code review & PR review](#path-g--code-review--pr-review-after-implement)
+11. [Path H — Testing](#path-h--testing)
+12. [Full lifecycle diagram](#full-lifecycle-diagram)
+13. [What to push where (git)](#what-to-push-where-git)
+14. [All skills (platform parity)](#all-skills-platform-parity)
+15. [Approval gate](#the-approval-gate-every-implement-path)
+16. [Artifact map](#what-goes-where-quick-map)
+17. [Decision tree](#decision-tree--which-path)
+18. [First end-to-end run](#first-end-to-end-run-copy-this-sequence)
+19. [Why folders look empty](#why-folders-look-empty-vs-platform)
+
+---
+
+## 1. Two layers — hub vs clone
+
+**Always open the hub in Cursor** — not only the app folder.
+
+```text
+┌─────────────────────────────────────────────────────────┐
+│  ai-orchestrator-workspace  ← OPEN THIS in Cursor       │
+│  prd/  specs/  reports/  docs/  .cursor/skills/         │
+│  Hub git — plans only, NO app source code               │
+└──────────────────────────┬──────────────────────────────┘
+                           │ setup.ps1 clones once
+                           ▼
+┌─────────────────────────────────────────────────────────┐
+│  projects/ipd/  ← real code lives here                  │
+│  src/ (React)  backend/ (Fastify)  e2e/                 │
+│  Own git → push to GitHub IPD repo only                 │
+│  Gitignored by hub — never pushed with hub branch       │
+└─────────────────────────────────────────────────────────┘
+```
+
+| Layer | What's there | Who pushes |
+|-------|--------------|------------|
+| **Hub** | PRDs, plans, test plans, review reports | Hub git |
+| **Clone** `projects/ipd/` | App code, tests, PRs | IPD git (via PR merge) |
+
+Same model as **platform-workspace**: hub = brain, clone = body. Platform uses `backend/` for microservices; this hub uses **`projects/`** for modular monoliths.
+
+---
+
+## 2. Who does what
+
+| Work | Agent | You |
+|------|-------|-----|
+| PRD, technical design, slices, slice plans | Writes drafts | **Approve** each gate (G1–G4) |
+| Code + tests in slice implement | Writes + runs | Review PR, **merge** |
+| Dedicated test plans | Writes in hub | Approve → `test-implement` |
+| `pre-review`, `code-review`, `pr-review` | Runs checks / writes reports | **Trigger** with chat command |
+| `pr-review-implement` | Applies fixes, pushes | Review again, merge |
+| Push hub docs | — | You (when ready) |
+
+**Agent does the work. You approve before code and before merge.**
+
+Messages like `Run feature-orchestrator for ipd — …` are **Cursor chat prompts**, not terminal commands. Replace the description with your feature in plain English:
+
+```text
+Run feature-orchestrator for ipd — Ward staff can admit a patient: demographics, ward, bed, validation, PHI audit log
+```
+
+---
+
+## 3. One-time setup
 
 | Step | Action |
 |------|--------|
-| 1 | Open **`C:\projects\ai-orchestrator-workspace`** in Cursor (the hub, not only the app folder) |
+| 1 | Open **`C:\projects\ai-orchestrator-workspace`** in Cursor |
 | 2 | Confirm `repos.yaml` lists your project (e.g. `ipd`) |
 | 3 | Run `.\scripts\setup.ps1` if `projects/ipd/` is missing |
-| 4 | Bookmark `docs/conventions/` — agents read these automatically |
+| 4 | Run `.\scripts\update.ps1` to pull latest on all clones |
+| 5 | Say `project-discovery ipd` — documents routes, modules, env |
+| 6 | Bookmark `docs/conventions/` — agents read these automatically |
 
-You do **not** need to fill convention files — they are pre-written.
+You do **not** need to fill convention files — they are pre-written for Fastify + React.
 
 ---
 
@@ -24,7 +101,7 @@ You do **not** need to fill convention files — they are pre-written.
 
 Use when the work is a **new capability** (epic, major screen, new module).
 
-### Step 1 — Start intake
+### Step 0 — Start intake
 
 **Say in Cursor:**
 
@@ -32,13 +109,9 @@ Use when the work is a **new capability** (epic, major screen, new module).
 Run feature-orchestrator for ipd — <describe the feature in plain English>
 ```
 
-Optional: add Jira link, Figma link, or screenshots.
+Optional: Jira link, Figma link, screenshots.
 
-**Agent creates:**
-
-```text
-prd/ipd/<feature>/ticket.md
-```
+**Agent creates:** `prd/ipd/<feature>/ticket.md`
 
 **You do:** Read it. Confirm scope is correct.
 
@@ -46,19 +119,15 @@ prd/ipd/<feature>/ticket.md
 
 ---
 
-### Step 2 — PRD (Gate G1)
+### Step 1 — PRD (Gate G1)
 
-**Agent creates:**
-
-```text
-prd/ipd/<feature>/prd.md
-```
+**Agent creates:** `prd/ipd/<feature>/prd.md`
 
 **You do:**
 
-1. Read problem, users, acceptance criteria, non-goals  
-2. Edit if needed  
-3. Add approval block at the bottom (copy from `docs/templates/approval.md`):
+1. Read problem, users, acceptance criteria, non-goals
+2. Edit if needed
+3. Add approval block (copy from `docs/templates/approval.md`):
 
 ```markdown
 ## Approval
@@ -72,27 +141,25 @@ prd/ipd/<feature>/prd.md
 
 ---
 
-### Step 3 — Technical design (Gate G2)
+### Step 2 — Technical design (Gate G2)
 
-**Agent creates:**
+**Agent creates:** `prd/ipd/<feature>/technical-design.md`
 
-```text
-prd/ipd/<feature>/technical-design.md
-```
+Contains: modules, API endpoints, DB entities, ADR references — **system level, not file list**.
 
-Contains: modules, API endpoints, DB entities, AD references — **system level, not file list**.
+The agent drafts this from the approved PRD + `docs/architecture/ipd.md` + `docs/decisions/ipd/`. You review, edit, and approve. A human architect can rewrite it before approval if you prefer.
 
 **You do:**
 
-1. Check it matches `docs/architecture/ipd.md`  
-2. Edit if needed  
-3. Add **Approval** block (same template)
+1. Check it matches `docs/architecture/ipd.md`
+2. Edit if needed (`Change technical design: …`)
+3. Add **Approval** block
 
 **Say:** `Decompose into slices`
 
 ---
 
-### Step 4 — Decompose slices (Gate G3)
+### Step 3 — Decompose slices (Gate G3)
 
 **Agent creates:**
 
@@ -108,68 +175,58 @@ prd/ipd/<feature>/slices/status.yaml
 
 **You do:**
 
-1. Review slice order  
-2. Approve in chat or add note in `slices/README.md`  
+1. Review slice order
+2. Approve in chat or add note in `slices/README.md`
 3. Add **Approval** block to `slices/README.md` or confirm in chat
 
 **Say:** `Plan slice 1` (or `Plan slice prd/ipd/<feature>/slices/slice-1.md`)
 
 ---
 
-### Step 5 — Plan slice (Gate G4)
+### Step 4 — Plan slice (Gate G4)
 
-**Agent creates:**
+**Agent creates:** `specs/features/ipd/slice-1-<name>.md`
 
-```text
-specs/features/ipd/slice-1-<name>.md
-```
-
-Contains: exact files in `projects/ipd/`, steps, tests, validation commands.
+Contains: exact files in `projects/ipd/`, steps, **tests to write**, validation commands.
 
 **You do:**
 
-1. Read every step — this is what the agent will execute  
-2. Edit if wrong  
+1. Read every step — this is what the agent will execute
+2. Edit if wrong
 3. Add **Approval** block — **required before implement**
 
 **Say:** `Implement specs/features/ipd/slice-1-<name>.md`
 
 ---
 
-### Step 6 — Implement
+### Step 5 — Implement
 
 **Agent does (in `projects/ipd/`, not hub):**
 
-1. Runs **convention-loader**  
-2. Creates git branch  
-3. Writes code + tests  
-4. Runs lint/typecheck/test  
-5. Opens PR (if you allow)  
-6. Writes report:
-
-```text
-reports/features/<branch>-report.md
-```
+1. Runs **convention-loader**
+2. Creates git branch `feat/ipd-slice-1-…`
+3. Writes code + tests from plan
+4. Runs lint / typecheck / test
+5. Opens PR (if you allow)
+6. Writes `reports/features/<branch>-report.md`
 
 **You do:**
 
-1. Review the PR  
-2. Test locally if needed  
-3. Merge when satisfied  
-4. Update `prd/ipd/<feature>/slices/status.yaml` → merged
-
-**Say (optional):** `pre-review ipd` before opening PR  
-**Say (optional):** `code-review ipd PR #N`
+1. Review the PR
+2. Test locally if needed
+3. Run review loop (Path G) — see below
+4. Merge when satisfied
+5. Update `prd/ipd/<feature>/slices/status.yaml` → merged
 
 ---
 
-### Step 7 — Next slice
+### Step 6 — Next slice
 
-Repeat **Steps 5–6** for slice 2, 3, … until all slices in `status.yaml` are merged.
+Repeat **Steps 4–5** for slice 2, 3, … until all slices in `status.yaml` are merged.
 
 ---
 
-### Step 8 — Close feature (optional)
+### Step 7 — Close feature (optional)
 
 ```text
 changelog ipd
@@ -186,7 +243,7 @@ Use when work fits **one PR** and does not need full PRD.
 |------|-----|--------|
 | 1 | `feature plan for ipd — <description>` | `specs/features/ipd/<name>.md` |
 | 2 | Review + add **Approval** | — |
-| 3 | `Implement specs/features/ipd/<name>.md` | Code + PR + report |
+| 3 | `Implement specs/features/ipd/<name>.md` | Code + tests + PR + report |
 
 Skip PRD, technical design, and decompose.
 
@@ -223,7 +280,7 @@ Use while building process/docs before touching app code.
 | 3 | Plan tests | `test-plan ipd admissions module` |
 | 4 | User journey | `journey ipd admit patient` |
 | 5 | API contract | `contracts ipd admissions` |
-| 6 | Full feature docs only | Path A Steps 1–5 — **stop before Step 6** |
+| 6 | Full feature docs only | Path A Steps 0–4 — **stop before implement** |
 
 ---
 
@@ -232,7 +289,7 @@ Use while building process/docs before touching app code.
 | Step | Action |
 |------|--------|
 | 1 | Create GitHub repo (modular monolith layout) |
-| 2 | Add entry to `repos.yaml` |
+| 2 | Add entry to `repos.yaml` under `projects:` |
 | 3 | Run `.\scripts\setup.ps1` |
 | 4 | Copy `docs/templates/project-architecture.md` → `docs/architecture/flowmd.md` |
 | 5 | Add row to `docs/architecture.md` |
@@ -246,24 +303,18 @@ Full detail: [onboarding-new-project.md](onboarding-new-project.md)
 
 ## Path G — Code review & PR review (after implement)
 
-Runs **after Step 6** of Path A (PR is open). Three roles: **author self-check**, **reviewer**, **author fixes feedback**.
+Runs **after implement** when a PR exists. Platform had `code-review`, `pr-review`, `pr-review-implement` — same jobs as skills here, plus **`pre-review`** (author self-check).
 
 ```text
 implement → pre-review → open PR → code-review → pr-review → pr-review-implement → merge
    author      author      author     reviewer      author           author
 ```
 
----
-
 ### G1 — Pre-review (author, before opening PR)
 
 **When:** Code is done on branch, before you open or share the PR.
 
-**Say:**
-
-```text
-pre-review ipd
-```
+**Say:** `pre-review ipd`
 
 **Agent checks in `projects/ipd/`:**
 
@@ -278,23 +329,17 @@ pre-review ipd
 
 ### G2 — Code review (reviewer, on open PR)
 
-**When:** PR exists on GitHub. Usually someone **other than the author** (or you in a fresh chat).
+**When:** PR exists on GitHub. Usually someone **other than the author**.
 
-**Say:**
-
-```text
-code-review ipd PR #12
-```
+**Say:** `code-review ipd PR #12`
 
 **Agent does:**
 
 1. Fetches PR diff via `gh` in `projects/ipd/`
-2. Finds original spec in hub (`specs/features/...` linked from PR body)
+2. Finds original spec in hub (`specs/features/...`)
 3. Checks code vs spec + conventions + security
-4. Writes report: `reports/code-reviews/pr-12-ipd-review.md`
+4. Writes `reports/code-reviews/pr-12-ipd-review.md`
 5. Can post review comments on GitHub (if `gh` configured)
-
-**Verdicts:** Approve / Request changes / Comment
 
 | Category | Meaning |
 |----------|---------|
@@ -306,24 +351,18 @@ code-review ipd PR #12
 
 ### G3 — PR review (author, after comments arrive)
 
-**When:** Reviewer left comments; **you** need a fix plan before coding.
+**When:** Reviewer left comments; you need a fix plan before coding.
 
-**Say:**
-
-```text
-pr-review ipd PR #12
-```
+**Say:** `pr-review ipd PR #12`
 
 **Agent does:**
 
 1. Fetches all PR comments from GitHub
 2. Reads original spec from hub
-3. Categorizes each comment: Fix Required / Will Defend / Clarification / Already Addressed
-4. Writes plan: `specs/pr-reviews/pr-12-<short-title>.md`
+3. Categorizes: Fix Required / Will Defend / Clarification / Already Addressed
+4. Writes `specs/pr-reviews/pr-12-<short-title>.md`
 
-**You do:** Review plan. Add **Approval** if you agree with fix approach.
-
-**No code changes yet** — plan only.
+**You do:** Review plan. Add **Approval**. **No code changes yet.**
 
 ---
 
@@ -331,11 +370,7 @@ pr-review ipd PR #12
 
 **When:** Fix plan is approved.
 
-**Say:**
-
-```text
-pr-review-implement specs/pr-reviews/pr-12-<short-title>.md
-```
+**Say:** `pr-review-implement specs/pr-reviews/pr-12-<short-title>.md`
 
 **Agent does:**
 
@@ -343,13 +378,11 @@ pr-review-implement specs/pr-reviews/pr-12-<short-title>.md
 2. Runs validation commands
 3. Pushes to same PR
 4. Replies to review comments on GitHub
-5. Writes report: `reports/pr-reviews/pr-12-report.md`
+5. Writes `reports/pr-reviews/pr-12-report.md`
 
 **You do:** Re-request review → repeat G2 if needed → merge when approved.
 
----
-
-### Path G summary table
+### Path G summary
 
 | Step | Skill | Who | Input | Output |
 |------|-------|-----|-------|--------|
@@ -362,29 +395,22 @@ pr-review-implement specs/pr-reviews/pr-12-<short-title>.md
 
 ## Path H — Testing
 
-Testing is **planned in the hub**, **implemented in the clone**, like features.
+Testing is **planned in the hub**, **implemented in the clone**, like features. Platform had `test-plan`, `test-implement`, etc. — same skills here.
 
 Strategy doc (read once): [`docs/test/testing-strategy.md`](test/testing-strategy.md)
 
----
+### When testing happens
 
-### When testing happens in the lifecycle
+| When | What |
+|------|------|
+| Path A Step 4 (slice plan) | Plan lists tests to write |
+| Path A Step 5 (implement) | Agent writes + runs those tests |
+| After slice merged (optional) | Dedicated `test-plan` for deeper coverage |
+| Every PR | CI in `projects/ipd/.github/workflows/ci.yml` |
 
-```text
-Path A Step 5 (slice plan)     → lists tests to write in that slice
-Path A Step 6 (implement)      → agent writes those tests + runs them
-After slice merged (optional)  → dedicated test-plan for deeper coverage
-CI in app repo                → runs on every PR automatically
-```
+**Minimum:** every slice plan includes tests; implement runs them.
 
-**Minimum:** every slice plan includes tests; implement runs them.  
-**Extra:** separate test-plan path for modules that need more coverage.
-
----
-
-### H1 — Test plan (hub, before writing tests)
-
-**When:** After a slice ships, or before a test-only PR, or when coverage is thin.
+### H1 — Test plan (hub)
 
 **Say (pick one):**
 
@@ -394,64 +420,31 @@ test-plan-integration ipd
 test-plan-contracts ipd
 ```
 
-**Agent writes:**
-
 | Skill | Output |
 |-------|--------|
 | `test-plan` | `specs/tests/unit/ipd/<module>.md` |
 | `test-plan-integration` | `specs/tests/integration/ipd.md` |
 | `test-plan-contracts` | `specs/tests/contracts/ipd.md` |
 
-**Plan includes:** what to test, file paths, mock strategy, vitest commands, priority (HIGH/MEDIUM/LOW).
-
 **You do:** Review plan. Add **Approval** before implement.
-
----
 
 ### H2 — Test implement (clone)
 
-**When:** Test plan approved.
-
-**Say:**
-
-```text
-test-implement specs/tests/unit/ipd/admissions.md
-```
+**Say:** `test-implement specs/tests/unit/ipd/admissions.md`
 
 **Agent does in `projects/ipd/`:**
 
-1. Creates branch `test/<scope>`
+1. Branch `test/<scope>`
 2. Writes Vitest tests per plan
-3. Runs `pnpm test` (backend and/or frontend)
+3. Runs `pnpm test`
 4. Opens PR (optional)
 5. Writes `reports/tests/<name>-report.md`
 
----
+### H3 — CI (automatic)
 
-### H3 — What runs automatically (CI)
+On every PR in the app repo: frontend typecheck + lint; backend typecheck + lint + test.
 
-In `projects/ipd/.github/workflows/ci.yml` — on every PR:
-
-- frontend: typecheck + lint  
-- backend: typecheck + lint + test  
-
-CI is in the **app repo**, not the hub. Agent should make PRs green before merge.
-
----
-
-### Testing priority (honeycomb)
-
-| Priority | What to test |
-|----------|--------------|
-| HIGH | `service.ts` logic, route handlers, React components with interaction |
-| HIGH | Integration: API + Postgres |
-| MEDIUM | API contract shapes, form validation |
-| LOW | Pure mappers, trivial helpers |
-| Minimal | E2E smoke in `e2e/` — critical journeys only |
-
----
-
-### Path H summary table
+### Path H summary
 
 | Step | Skill | Output |
 |------|-------|--------|
@@ -459,24 +452,90 @@ CI is in the **app repo**, not the hub. Agent should make PRs green before merge
 | H1b | `test-plan-integration` | `specs/tests/integration/` |
 | H1c | `test-plan-contracts` | `specs/tests/contracts/` |
 | H2 | `test-implement` | tests in `projects/ipd/` + `reports/tests/` |
-| — | CI | `.github/workflows/ci.yml` in app repo |
 
 ---
 
-## Full timeline — feature + test + review
+## Full lifecycle diagram
 
 ```text
-1.  feature-orchestrator → PRD → TD → slices        (Path A 1–4)
-2.  plan slice → spec includes test section           (Path A 5)
-3.  implement slice → code + tests + PR               (Path A 6)
-4.  pre-review                                        (G1)
-5.  code-review                                       (G2)
-6.  pr-review → pr-review-implement (if comments)     (G3–G4)
-7.  merge
-8.  test-plan (optional extra coverage)               (H1)
-9.  test-implement (optional)                         (H2)
-10. next slice → repeat
+YOU: describe feature
+  │
+  ▼
+feature-orchestrator ──► ticket.md
+  │
+  ▼
+PRD ──────────────────► prd.md                    [YOU approve G1]
+  │
+  ▼
+technical-design ─────► technical-design.md       [YOU approve G2]
+  │
+  ▼
+decompose-slices ─────► slices/slice-1..N.md    [YOU approve G3]
+  │
+  ▼
+plan-slice ───────────► specs/features/slice-1   [YOU approve G4]
+  │                      (includes test list)
+  ▼
+┌─────────────────────────────────────────────────────────┐
+│  projects/ipd/ — implement-slice: code + tests + PR   │
+└─────────────────────────────────────────────────────────┘
+  │
+  ▼
+pre-review ipd                                    [optional, G1]
+  │
+  ▼
+code-review ipd PR #N                             [reviewer, G2]
+  │
+  ▼
+pr-review ipd PR #N                               [author, G3]
+  │
+  ▼
+pr-review-implement                               [author, G4]
+  │
+  ▼
+MERGE ──► next slice OR changelog/drift
+
+Optional parallel:
+  test-plan ──► test-implement  (extra coverage beyond slice)
 ```
+
+---
+
+## What to push where (git)
+
+| You push… | To… | Contains |
+|-----------|-----|----------|
+| Hub branch | ai-orchestrator-workspace git | `prd/`, `specs/`, `reports/`, `docs/` |
+| IPD PR merge | IPD GitHub repo | Code, tests, migrations |
+| **Never** | Hub git | `projects/ipd/` (gitignored) |
+
+---
+
+## All skills (platform parity)
+
+Platform uses `.claude/commands/`; this hub uses `.cursor/skills/` — same jobs.
+
+| Category | Skills |
+|----------|--------|
+| **Feature flow** | `feature-orchestrator`, `prd`, `technical-design`, `decompose-slices`, `plan-slice`, `implement-slice`, `feature` |
+| **Bug / chore** | `bug`, `chore` |
+| **Testing** | `test-plan`, `test-implement`, `test-plan-integration`, `test-plan-contracts` |
+| **Review** | `pre-review`, `code-review`, `pr-review`, `pr-review-implement` |
+| **Docs** | `project-discovery`, `drift`, `contracts`, `journey`, `changelog`, `architecture` |
+| **Decisions** | `architecture-decision`, `architecture-decision-record` |
+| **Conventions** | `convention-loader` |
+
+| Platform command | Your skill |
+|------------------|------------|
+| `test-plan` | `test-plan` |
+| `test-implement` | `test-implement` |
+| `code-review` | `code-review` |
+| `pr-review` | `pr-review` |
+| `implement` | `implement-slice` |
+| `services` / `service` | `project-discovery` (one project at a time) |
+| — | `pre-review`, `feature-orchestrator` (extras) |
+
+Not ported (different stack): `fastapi-service`, `django-service`, `angular-app`, `react-native-app` — use one monolith per `projects/<name>/`.
 
 ---
 
@@ -506,7 +565,7 @@ If missing → agent **must refuse** implement. This is by design.
 | After implement | `reports/features/` |
 | Code review | `reports/code-reviews/` |
 | PR fix plans | `specs/pr-reviews/` + `reports/pr-reviews/` |
-| Test plans | `specs/tests/unit|integration|contracts/` |
+| Test plans | `specs/tests/unit\|integration\|contracts/` |
 | Test reports | `reports/tests/` |
 | Coding standards | `docs/conventions/` |
 | System architecture | `docs/architecture/ipd.md` |
@@ -525,21 +584,71 @@ Upgrade / cleanup?     → Path D
 Docs/plans only?       → Path E (stop before implement)
 New app in hub?        → Path F
 Fix PR comments?       → Path G (G3–G4)
-Review someone's PR? → Path G (G2)
-Extra test coverage? → Path H
+Review someone's PR?   → Path G (G2)
+Extra test coverage?   → Path H
 ```
 
 ---
 
-## Your first exercise (hub only, ~15 min)
+## First end-to-end run (copy this sequence)
 
-Do Path A **Steps 1–5 only** — no implement:
+```text
+1.  project-discovery ipd
+
+2.  Run feature-orchestrator for ipd — <your feature in plain English>
+
+3.  Proceed to PRD → approve → Proceed to technical design
+
+4.  approve TD → Decompose into slices
+
+5.  approve slices → Plan slice 1
+
+6.  approve slice plan → Implement specs/features/ipd/slice-1-....md
+
+7.  pre-review ipd
+
+8.  code-review ipd PR #1
+
+9.  (if comments) pr-review ipd PR #1 → approve plan → pr-review-implement ...
+
+10. merge → Plan slice 2 ... or changelog ipd
+```
+
+### Hub-only practice (~15 min, no code)
+
+Do Path A **Steps 0–4 only**:
 
 ```text
 Run feature-orchestrator for ipd — ward bed occupancy dashboard for nurses
 ```
 
-Stop after the slice plan is approved. You will have a full paper trail in `prd/` and `specs/` with zero code changes.
+Stop after the slice plan is approved. Full paper trail in `prd/` and `specs/` with zero code changes.
+
+---
+
+## Why folders look empty vs platform
+
+Platform has hundreds of files in `prd/`, `specs/tests/`, `reports/code-reviews/` from **years of delivery**. Your hub has the **structure + skills** — content appears each time you run a step. That is normal for a new hub.
+
+---
+
+## Quick reference — what to say
+
+| Goal | Command |
+|------|---------|
+| Full feature | `Run feature-orchestrator for ipd — …` |
+| Plan one slice | `Plan slice 1` |
+| Write code | `Implement specs/features/ipd/slice-1-….md` |
+| Bug | `Bug: … on ipd` |
+| Small feature | `feature plan for ipd — …` |
+| Document app | `project-discovery ipd` |
+| Check stale docs | `drift ipd` |
+| Unit test plan | `test-plan ipd admissions module` |
+| Write tests | `test-implement specs/tests/...` |
+| Self-check before PR | `pre-review ipd` |
+| Review PR | `code-review ipd PR #N` |
+| Plan PR fixes | `pr-review ipd PR #N` |
+| Apply PR fixes | `pr-review-implement specs/pr-reviews/...` |
 
 ---
 
@@ -550,4 +659,5 @@ Stop after the slice plan is approved. You will have a full paper trail in `prd/
 | [ai-driven-development.md](ai-driven-development.md) | Why this model exists |
 | [how-it-works.md](how-it-works.md) | Folder layout + skills list |
 | [developer-guide.md](developer-guide.md) | Full skill reference |
+| [platform-parity.md](platform-parity.md) | How this maps to platform-workspace |
 | [architecture/STRUCTURE.md](architecture/STRUCTURE.md) | Writing architecture docs |
