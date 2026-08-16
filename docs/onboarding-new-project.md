@@ -26,7 +26,7 @@ projects:
     repo: https://github.com/YOUR_ORG/flowmd.git
     branch: main
     type: modular-monolith
-    description: Short label for architecture index
+    product: flowmd
     layout:
       frontend: .
       backend: backend/

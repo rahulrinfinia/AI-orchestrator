@@ -12,42 +12,56 @@ if (-not (Test-Path $ReposFile)) {
     Write-Error "repos.yaml not found at $ReposFile"
 }
 
-$ProjectsDir = Join-Path $Root "projects"
-New-Item -ItemType Directory -Force -Path $ProjectsDir | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $Root "projects") | Out-Null
 
-# Minimal YAML parse for projects list (name, repo, branch)
-$content = Get-Content $ReposFile -Raw
-$lines = Get-Content $ReposFile
-$projects = @()
-$current = $null
+function Parse-Projects {
+    param([string[]]$Lines)
 
-foreach ($line in $lines) {
-    if ($line -match '^\s*-\s*name:\s*(.+)$') {
-        if ($current) { $projects += $current }
-        $current = @{ name = $Matches[1].Trim(); repo = ""; branch = "main" }
+    $repos = @()
+    $inSection = $false
+    $current = $null
+
+    foreach ($line in $Lines) {
+        if ($line -match '^\s*projects\s*:\s*$') {
+            $inSection = $true
+            continue
+        }
+        if ($inSection -and $line -match '^\s*\w+\s*:\s*$' -and $line -notmatch '^\s*-\s*name:') {
+            break
+        }
+        if ($inSection -and $line -match '^\s*-\s*name:\s*(.+)$') {
+            if ($current) { $repos += $current }
+            $current = @{ name = $Matches[1].Trim(); repo = ""; branch = "main" }
+        }
+        elseif ($inSection -and $current -and $line -match '^\s*repo:\s*(.+)$') {
+            $current.repo = $Matches[1].Trim()
+        }
+        elseif ($inSection -and $current -and $line -match '^\s*branch:\s*(.+)$') {
+            $current.branch = $Matches[1].Trim()
+        }
     }
-    elseif ($current -and $line -match '^\s*repo:\s*(.+)$') {
-        $current.repo = $Matches[1].Trim()
-    }
-    elseif ($current -and $line -match '^\s*branch:\s*(.+)$') {
-        $current.branch = $Matches[1].Trim()
-    }
+    if ($current) { $repos += $current }
+    return $repos | Where-Object { $_.name -and $_.repo -and $_.repo -notmatch '^#' }
 }
 
-if ($current) { $projects += $current }
-$projects = $projects | Where-Object { $_.name -and $_.repo -and $_.repo -notmatch '^#' }
+$lines = Get-Content $ReposFile
+$projects = Parse-Projects -Lines $lines
+$target = Join-Path $Root "projects"
 
 if ($projects.Count -eq 0) {
-    Write-Host "No projects configured in repos.yaml (add entries under projects:)." -ForegroundColor Yellow
-    Write-Host "See docs/adding-a-project.md"
+    Write-Host "No projects in repos.yaml — see docs/adding-a-project.md" -ForegroundColor Yellow
     exit 0
 }
 
+Write-Host "`nProjects:" -ForegroundColor Cyan
 foreach ($p in $projects) {
-    $dest = Join-Path $ProjectsDir $p.name
-    if (Test-Path (Join-Path $dest ".git")) {
+    $dest = Join-Path $target $p.name
+    if ((Test-Path (Join-Path $dest ".git")) -and -not $Force) {
         Write-Host "  OK  projects/$($p.name) (exists)" -ForegroundColor Green
         continue
+    }
+    if (Test-Path $dest) {
+        Remove-Item -Recurse -Force $dest
     }
     Write-Host "  ->  Cloning $($p.name)..." -ForegroundColor Yellow
     git clone --branch $p.branch $p.repo $dest
@@ -59,3 +73,4 @@ foreach ($p in $projects) {
 }
 
 Write-Host "`n=== Setup complete ===" -ForegroundColor Green
+Write-Host "Next: project-discovery ipd  (or run from Cursor)"

@@ -50,9 +50,7 @@ One vertical slice = one PR touching backend + frontend + migrations + tests whe
 | Review | `pre-review`, `code-review`, `pr-review`, `pr-review-implement` |
 | Docs | `project-discovery`, `drift`, `contracts`, `journey`, `changelog`, `architecture` |
 | Decisions | `architecture-decision`, `architecture-decision-record` |
-
-| **Decisions** | `architecture-decision`, `architecture-decision-record` |
-| **Conventions** | `convention-loader` — load relevant rules before coding |
+| Conventions | `convention-loader` — load relevant rules before coding |
 
 ## Key rules
 

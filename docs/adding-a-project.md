@@ -3,13 +3,15 @@
 Same model as **platform-workspace**: one planning hub, many cloned app repos.
 
 ```text
-platform-workspace          ai-orchestrator-workspace
-├── backend/user-backend/   ├── projects/ipd/
-├── backend/master-backend/ ├── projects/flowmd/     ← future
-└── docs/architecture/      └── docs/architecture/
-    ├── curio.md                ├── ipd.md
-    └── caria.md                └── flowmd.md       ← future
+platform-workspace              ai-orchestrator-workspace
+├── backend/user-backend/       ├── projects/ipd/
+├── backend/master-backend/     ├── projects/flowmd/     ← future
+└── docs/architecture/          └── docs/architecture/
+    ├── curio.md                    ├── ipd.md
+    └── caria.md                    └── flowmd.md       ← future
 ```
+
+Platform uses `backend/` for microservices; this hub uses **`projects/`** for modular monoliths. Same git model — clones are gitignored in the hub.
 
 ---
 
@@ -36,7 +38,7 @@ projects:
     repo: git@github.com:YOUR_ORG/flowmd.git
     branch: develop
     type: modular-monolith
-    description: Short label for architecture index
+    product: flowmd
     layout:
       frontend: .
       backend: backend/

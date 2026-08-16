@@ -4,8 +4,14 @@
 # Keep directory structure
 !projects/.gitkeep
 
-# Design assets (large binaries — track links in prd/, not raw exports)
+# Design / mockup assets (large binaries — track links in prd/, not raw exports)
+/mockups/**
+!/mockups/.gitkeep
 **/design/exports/
+
+# Specs — only track subdirectories, not loose files in specs root
+/specs/*
+!/specs/*/
 
 # OS / editor
 .DS_Store
@@ -14,6 +20,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Cursor — user-specific (machine-local)
+.cursor/projects/
 
 # Environment
 .env

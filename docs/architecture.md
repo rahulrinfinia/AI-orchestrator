@@ -1,6 +1,6 @@
 # Architecture (workspace index)
 
-Combined index for all products cloned into `projects/`. Per-product deep dives live in [`architecture/`](architecture/).
+Combined index for all products cloned into `backend/` (and `frontend/` when separate SPA repos). Per-product deep dives live in [`architecture/`](architecture/).
 
 Same pattern as platform-workspace: **one hub, many app repos, architecture split by product.**
 
@@ -21,7 +21,7 @@ _Add a row here when you register a new project in `repos.yaml`._
 ```text
 ai-orchestrator-workspace/
 ├── repos.yaml                    ← list all projects to clone
-├── projects/
+├── backend/
 │   ├── ipd/                      ← app repo (own git)
 │   ├── flowmd/                   ← future
 │   └── <name>/                   ← future

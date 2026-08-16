@@ -2,8 +2,9 @@
 
 | Path | Purpose |
 |------|---------|
-| **[onboarding-new-project.md](onboarding-new-project.md)** | **Onboard a new product** to the hub (~30 min) |
-| **[how-it-works.md](how-it-works.md)** | **Start here** — hub vs clone, workflow, gates, skills, examples |
+| **[step-by-step.md](step-by-step.md)** | **Step-by-step walkthrough** — numbered paths A–G |
+| **[ai-driven-development.md](ai-driven-development.md)** | Conceptual guide — what AI-driven development is and why |
+| **[how-it-works.md](how-it-works.md)** | Operational guide — hub vs clone, workflow, commands |
 | [developer-guide.md](developer-guide.md) | Operational reference and skill list |
 | [adding-a-project.md](adding-a-project.md) | Register + clone a new app |
 | [architecture.md](architecture.md) | **Index** — all products |

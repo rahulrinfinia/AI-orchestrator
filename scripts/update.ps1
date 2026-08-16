@@ -1,23 +1,25 @@
-$ErrorActionPreference = "Stop"
+# Update all cloned project repos
+
+$ErrorActionPreference = "Continue"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$ProjectsDir = Join-Path $Root "projects"
 
-Write-Host "=== Updating cloned projects ===" -ForegroundColor Green
+Write-Host "=== Updating All Projects ===" -ForegroundColor Green
 
-Get-ChildItem -Path $ProjectsDir -Directory -ErrorAction SilentlyContinue | ForEach-Object {
-    $git = Join-Path $_.FullName ".git"
-    if (-not (Test-Path $git)) { return }
-    Write-Host "  -> $($_.Name)..." -ForegroundColor Yellow
-    Push-Location $_.FullName
+Get-ChildItem (Join-Path $Root "projects") -Directory -ErrorAction SilentlyContinue | ForEach-Object {
+    $dir = $_.FullName
+    if (-not (Test-Path (Join-Path $dir ".git"))) { return }
+
+    Write-Host "  ->  Updating $($_.Name)..." -ForegroundColor Yellow
+    Push-Location $dir
     if (git status --porcelain) {
-        Write-Host "    Stashing local changes" -ForegroundColor Yellow
-        git stash push -m "workspace-update"
+        Write-Host "    ! Stashing local changes" -ForegroundColor Yellow
+        git stash push -m "workspace-update-$(Get-Date -Format yyyyMMdd)"
     }
     git pull --ff-only
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "  OK  $($_.Name)" -ForegroundColor Green
+        Write-Host "  OK  projects/$($_.Name)" -ForegroundColor Green
     } else {
-        Write-Host "  WARN $($_.Name) — manual merge may be needed" -ForegroundColor Yellow
+        Write-Host "  !   projects/$($_.Name) diverged — manual merge needed" -ForegroundColor Yellow
     }
     Pop-Location
 }

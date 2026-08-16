@@ -2,7 +2,7 @@
 
 This document explains the **AI Orchestrator Workspace** — what it is, how the pieces fit together, and how you use it day to day.
 
-For setup steps see [adding-a-project.md](adding-a-project.md). For command reference see [developer-guide.md](developer-guide.md).
+For setup steps see [adding-a-project.md](adding-a-project.md). For platform-workspace mapping see [platform-parity.md](platform-parity.md). For command reference see [developer-guide.md](developer-guide.md).
 
 ---
 
