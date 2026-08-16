@@ -2,10 +2,12 @@
 
 | Path | Purpose |
 |------|---------|
+| **[onboarding-new-project.md](onboarding-new-project.md)** | **Onboard a new product** to the hub (~30 min) |
 | **[how-it-works.md](how-it-works.md)** | **Start here** — hub vs clone, workflow, gates, skills, examples |
 | [developer-guide.md](developer-guide.md) | Operational reference and skill list |
 | [adding-a-project.md](adding-a-project.md) | Register + clone a new app |
-| [architecture.md](architecture.md) | Cross-project system map (fill per org) |
+| [architecture.md](architecture.md) | **Index** — all products |
+| [architecture/](architecture/) | **One HLD per product** + [STRUCTURE.md](architecture/STRUCTURE.md) cheat sheet |
 | [conventions/](conventions/) | **Industry standards** — backend, frontend, API, HIPAA, security |
 | [test/testing-strategy.md](test/testing-strategy.md) | Testing honeycomb for monolith |
 | [decisions/ipd/](decisions/ipd/) | Accepted ADRs for IPD |

@@ -78,3 +78,4 @@ Optional tooling: copy `.mcp.json.example` → `.mcp.json` for Sonar/Sentry.
 - **[How it works](docs/how-it-works.md)** — start here
 - [Developer guide](docs/developer-guide.md) — command reference
 - [Adding a project](docs/adding-a-project.md)
+- [Onboarding a new project](docs/onboarding-new-project.md)

@@ -1,27 +1,97 @@
 # Architecture (workspace index)
 
-Fill this as you add projects. One section per cloned monolith.
+Combined index for all products cloned into `projects/`. Per-product deep dives live in [`architecture/`](architecture/).
 
-## Projects
+Same pattern as platform-workspace: **one hub, many app repos, architecture split by product.**
 
-| Project | Path | Frontend | Backend | Status |
-|---------|------|----------|---------|--------|
-| ipd | `projects/ipd/` | `src/` (Vite) | `backend/` (Fastify) | Registered — https://github.com/rahulrinfinia/IPD |
+---
 
-## Per-project template
+## Products
 
-### flowmd (example)
+| Project | Clone path | Pattern | Architecture | Service doc | ADRs |
+|---------|------------|---------|--------------|-------------|------|
+| **ipd** | `projects/ipd/` | Modular monolith (Fastify + React) | [architecture/ipd.md](architecture/ipd.md) | [services/ipd.md](services/ipd.md) | [decisions/ipd/](decisions/ipd/) |
 
-- **Repo:** `projects/flowmd/`
-- **Pattern:** Modular monolith — Fastify API + React SPA
-- **Wire:** REST `/api/*`, snake_case JSON; frontend camelCase via `src/integrations/api/client.ts`
-- **Domains:** frontdesk, clinical, rcm, pharmacy, patient, platform, orchestration
-- **Data:** PostgreSQL 16, hand-written SQL migrations
-- **Deploy:** Separate artifacts — Nginx (SPA) + Fastify (API); path-based CI
+_Add a row here when you register a new project in `repos.yaml`._
+
+---
+
+## Workspace layout (multi-project)
+
+```text
+ai-orchestrator-workspace/
+├── repos.yaml                    ← list all projects to clone
+├── projects/
+│   ├── ipd/                      ← app repo (own git)
+│   ├── flowmd/                   ← future
+│   └── <name>/                   ← future
+├── docs/
+│   ├── architecture.md           ← this file (index)
+│   ├── architecture/<name>.md    ← one per product
+│   ├── services/<name>.md          ← one per product
+│   ├── decisions/<name>/           ← ADRs per product
+│   ├── contracts/<name>/           ← API docs per product
+│   └── journeys/<name>/            ← flows per product
+├── prd/<name>/                     ← features per product
+└── specs/features/<name>/          ← plans per product
+```
+
+---
+
+## Document layers (do not mix levels)
+
+| Layer | Location | Scope |
+|-------|----------|--------|
+| **Workspace index** | `docs/architecture.md` | All products — table + rules |
+| **Product architecture (HLD)** | `docs/architecture/<name>.md` | One monolith — modules, data, deploy |
+| **Service discovery** | `docs/services/<name>.md` | What exists in the clone today |
+| **Architecture decisions** | `docs/decisions/<name>/` | ADRs — Postgres, auth, etc. |
+| **Feature technical design** | `prd/<feature>/technical-design.md` | One epic |
+| **Slice plan (LLD)** | `specs/features/<name>/` | One slice |
+
+---
 
 ## Cross-project rules
 
-- Planning artifacts stay in **this hub** only.
-- No application source committed to the hub repo.
-- Coding standards: `docs/conventions/` — run **convention-loader** before implement.
-- IPD ADRs: `docs/decisions/ipd/` (Postgres, Better Auth, deploy split, audit logging).
+- Planning stays in **this hub** only — no app source in hub git.
+- **Same stack** (Fastify + React + Postgres): reuse `docs/conventions/` for all projects.
+- **Different stack** later: add `docs/conventions/<stack>.md` (like platform’s 7 convention files).
+- **Do not cross-apply** product-specific ADRs — `decisions/ipd/` ≠ `decisions/flowmd/`.
+- Before implement: **convention-loader** + product architecture doc.
+- After clone or major change: **project-discovery** → **drift**.
+
+---
+
+## Adding a new product (checklist)
+
+1. Create GitHub repo (modular monolith layout).
+2. Add entry to `repos.yaml`.
+3. Run `.\scripts\setup.ps1` → `projects/<name>/`.
+4. Create hub docs (copy template `docs/templates/new-project-checklist.md`).
+5. Add row to the table above.
+6. Optional: `project-discovery <name>`.
+
+---
+
+## Shared conventions (all monolith projects)
+
+| Doc | Purpose |
+|-----|---------|
+| [conventions/folder-structure.md](conventions/folder-structure.md) | Module layout |
+| [conventions/fastify-backend.md](conventions/fastify-backend.md) | API modules |
+| [conventions/react-frontend.md](conventions/react-frontend.md) | UI features |
+| [conventions/api-design.md](conventions/api-design.md) | REST rules |
+| [conventions/hipaa.md](conventions/hipaa.md) | Healthcare apps |
+
+---
+
+## How to update
+
+| Change | Action |
+|--------|--------|
+| New project registered | Add `architecture/<name>.md`, `services/<name>.md`, update this index |
+| New ADR | `docs/decisions/<name>/NNNN-*.md` + link from product architecture |
+| New feature | `prd/` + technical design — update architecture only if boundaries change |
+| Code drift | `drift <name>` |
+
+Use skill **`architecture`** to refresh product docs after structural changes.

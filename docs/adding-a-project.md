@@ -1,11 +1,24 @@
 # Adding a project
 
-## 1. Create the application repo
-
-Create a **modular monolith** on GitHub:
+Same model as **platform-workspace**: one planning hub, many cloned app repos.
 
 ```text
-flowmd/
+platform-workspace          ai-orchestrator-workspace
+├── backend/user-backend/   ├── projects/ipd/
+├── backend/master-backend/ ├── projects/flowmd/     ← future
+└── docs/architecture/      └── docs/architecture/
+    ├── curio.md                ├── ipd.md
+    └── caria.md                └── flowmd.md       ← future
+```
+
+---
+
+## 1. Create the application repo
+
+Modular monolith on GitHub:
+
+```text
+<name>/
 ├── src/                 ← React + Vite
 ├── backend/             ← Fastify + modules
 ├── e2e/
@@ -13,7 +26,7 @@ flowmd/
 └── README.md
 ```
 
-Initialize with your stack (Fastify, React, Postgres, etc.).
+---
 
 ## 2. Register in repos.yaml
 
@@ -23,10 +36,13 @@ projects:
     repo: git@github.com:YOUR_ORG/flowmd.git
     branch: develop
     type: modular-monolith
+    description: Short label for architecture index
     layout:
       frontend: .
       backend: backend/
 ```
+
+---
 
 ## 3. Clone into workspace
 
@@ -37,25 +53,44 @@ cd C:\projects\ai-orchestrator-workspace
 
 Result: `projects/flowmd/` (gitignored in hub, own `.git` inside).
 
-## 4. Add hub documentation
+---
 
-Create:
+## 4. Add hub documentation (required for each project)
 
-- `docs/services/flowmd.md` — modules, ports, deploy targets
-- `prd/flowmd/` — when starting first feature
+Use checklist: [`docs/templates/new-project-checklist.md`](templates/new-project-checklist.md)  
+Quick guide: [`onboarding-new-project.md`](onboarding-new-project.md)
 
-## 5. Copy coding rules into the app repo
+| File | Action |
+|------|--------|
+| `docs/architecture/<name>.md` | Copy [`project-architecture.md`](templates/project-architecture.md) |
+| `docs/architecture.md` | Add row to products table |
+| `docs/services/<name>.md` | Run `project-discovery <name>` |
+| `docs/decisions/<name>/` | Add ADRs (Postgres, auth, deploy, …) |
+| `prd/<name>/` | When first feature starts |
 
-Add `.cursor/rules/` inside `projects/flowmd/` for Fastify/React standards (or symlink from template when ready).
+Optional later: `docs/contracts/<name>/`, `docs/journeys/<name>/`, `docs/changelog/<name>/`
+
+---
+
+## 5. App repo rules (when coding)
+
+Add `.cursor/rules/` inside `projects/<name>/` (backend, frontend, security).
+
+---
 
 ## 6. Start first feature
 
-In Cursor (this hub):
-
 ```text
-Run feature-orchestrator for flowmd — Jira PROJ-123 + Figma <link>
+Run feature-orchestrator for flowmd — Jira PROJ-123 + description
 ```
 
-## Adding another product later
+---
 
-Add another `projects:` entry → `setup.ps1` again. Same hub, multiple clones.
+## Adding more products later
+
+1. Another `projects:` entry in `repos.yaml`
+2. `setup.ps1` again
+3. New `docs/architecture/<name>.md` — **do not** merge into ipd.md
+4. Same `docs/conventions/` if same stack (Fastify + React)
+
+No limit on project count — hub scales like platform-workspace.

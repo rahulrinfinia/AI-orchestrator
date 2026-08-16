@@ -1,22 +1,37 @@
 # Register modular-monolith projects cloned into projects/<name>/
 #
+# ONE HUB — MANY PROJECTS (same as platform-workspace: one workspace, many clones)
+#
 # Add a project:
-#   1. Create the app repo on GitHub (monorepo: src/ + backend/)
+#   1. Create the app repo on GitHub
 #   2. Add an entry below
 #   3. Run: .\scripts\setup.ps1
+#   4. Follow: docs/templates/new-project-checklist.md
 #
 # Fields:
-#   name     — folder under projects/
-#   repo     — git clone URL
-#   branch   — default branch to clone
-#   type     — modular-monolith (only type supported today)
-#   layout   — frontend path (repo root) and backend path
+#   name        — folder under projects/ (lowercase)
+#   repo        — git clone URL
+#   branch      — default branch
+#   type        — modular-monolith
+#   description — short label for docs index (optional)
+#   layout      — frontend path and backend path
 
 projects:
   - name: ipd
     repo: https://github.com/rahulrinfinia/IPD.git
     branch: main
     type: modular-monolith
+    description: In-patient department — hospital admissions & beds
     layout:
       frontend: .
       backend: backend/
+
+  # Example — uncomment when ready:
+  # - name: flowmd
+  #   repo: git@github.com:YOUR_ORG/flowmd.git
+  #   branch: develop
+  #   type: modular-monolith
+  #   description: FlowMD clinical workspace
+  #   layout:
+  #     frontend: .
+  #     backend: backend/
