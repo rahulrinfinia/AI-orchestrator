@@ -1,0 +1,88 @@
+---
+description: HIS lessons from PR #47 and PR #50 review — response schemas, AJV messages, registration guards, test mocks, module structure, route registration
+alwaysApply: true
+---
+
+# HIS — PR review lessons (do not repeat)
+
+Source: PR #47 review fixes (`3765e95`, `c3f3a4c`) and regression on `feat/platform-admin-hospitals`.
+
+## Fastify — response schemas (required)
+
+- Every route: `schema.response` for success **and** error codes the handler returns.
+- Define `*ResponseSchema` in `*.schema.ts`; wire in `*.routes.ts` — not body-only validation.
+- When adding handler fields (e.g. `identification_number`, `eccif_coverage`), extend response schemas too or integration tests fail serialization checks.
+
+## AJV — human-readable messages
+
+- Custom messages use **Title Case labels**, not snake_case keys.
+- Good: `First Name`, `Estimated Age (years)`, `Related Person Identifier Type`, `Identification Number cannot be blank when provided`
+- Bad: `first_name`, `identifier_type`, `birth_date`
+- Update `__tests__/*schema.test.ts` when message strings change.
+
+## Patient registration — business rules
+
+- `POST .../complete-registration` **only** for provisional patients (`registration_mode = emergency`). Others → `422` with `COMPLETION_NOT_PROVISIONAL`.
+- `validateIdentityForWrite`: identity optional when **both** type and number blank; use `identity?.` not `identity!`.
+- Document types / nationality from **org identity profile** (DB) — no static `config/identity-profiles/*.json`.
+- Emergency create and complete-registration are separate flows; completion promotes provisional → full.
+
+## IPD UI routes
+
+- New screens: `/ipd`, `/ipd/admission`, … — **not** `/ipd/v1/*`.
+- API unchanged: `/api/v1/ipd/…`.
+- Do not re-add `/ipd/v1` legacy redirects unless product asks.
+
+## Integration test mocks
+
+When routes use response schemas + org auth:
+
+- Mock org rows need `active: true` (and `opd_enabled` / `ipd_enabled` as needed) or `rejectSuspendedHospital` → **403**.
+- List/pagination mocks need `total` (and page shape) or response schema validation → **500**.
+
+## Frontend test stability
+
+- Barrel import tests (`moduleExports`, `moduleBoundaries`): use **60s** timeout when importing `@/modules/*` registries under full suite.
+
+## Before PR
+
+Same as `his-match-ci-before-done`: `npm run lint` + `npx tsc -b` (frontend), `npm run build` + tests (backend). Run integration tests when touching routes, schemas, or db mocks.
+
+---
+
+## PR #50 lessons (do not repeat)
+
+Source: PR #50 review fixes on `feat/platform-admin-hospitals`.
+
+### Module structure — no "portable root" split
+
+- Implementation lives directly in `src/modules/<name>/` (backend and frontend). Do **not** split a module across a separate top-level `src/<name>/` "portable" folder plus a thin `src/modules/<name>/index.ts` that just re-exports it — that's two places to look for one module.
+- Reference shape: `mch` — everything (`<name>.constants.ts`, `<name>.types.ts`, `api/`, `hooks/`, pages/routes as applicable) sits directly under `src/modules/<name>/`.
+- One constants file, one types file per module — not `constants/index.ts` + `constants/<feature>.ts` split for no reason.
+
+### Constants ↔ types — no circular imports
+
+- If a module's `<name>.constants.ts` and `<name>.types.ts` import from each other, one of them must become a pure leaf (zero imports) and the other imports from it one-directionally.
+- Put the raw `as const` value objects (and any type derived via `(typeof X)[keyof typeof X]`) in the same file as their source constant, not split across the two files by convention alone.
+
+### Route registration
+
+- `*.routes.ts` never contains a hardcoded API base path repeated per route (`/api/platform/...` on every line). Define `<MODULE>_API_BASE` in `<module>.constants.ts` and build every path from it.
+- `*.routes.ts` never contains an inline handler — not even a trivial one like `/health`. Every route delegates to a named handler in `*.controller.ts`, matching the rest of the module.
+
+### Service file naming for a split-out concern
+
+- When a focused piece of a module's service is pulled into its own file, name it `<concern>.service.ts` — **drop the module-name prefix** (the folder already scopes it). Reference: `identityProfile.service.ts`, `relatedPersons.service.ts`, `sse.service.ts`. Bad: `org.invite.ts`, `org.auth.ts`.
+
+### Constants dedup — check across files, not just within one
+
+- The same hardcoded string/comparison (e.g. a role check) duplicated across **multiple files** is the same bug as duplicating it within one file — grep the literal across the whole repo, not just the file under review, before deciding a constant isn't warranted.
+
+### Integration test DB mocks — default row completeness
+
+- A **default** (non-overridden) mock row for a table must include every field that *any* real call site destructures from it — not just the fields the first caller happened to need. A missing field silently becomes `undefined`/`NaN` in the handler instead of failing loudly, and can pass every existing test while still 500ing on any endpoint nobody happened to exercise with default mock state. Caught by a full-route sweep test (`openapi-get-sweep.integration.test.ts`), not by the endpoint's own test.
+- When one query shape isn't enough because a single code path issues several differently-shaped queries against the same table in sequence (e.g. a role-gate check, then a user-count query, then a grouped-count query, all against `user_roles`), use a per-table **queued** override (`createQueuedDrizzleOverride` in `db-mock-impl.ts`) rather than trying to cram every shape into one static row.
+
+### AJV messages — don't break existing message-content assertions
+
+- Before rewriting an `errorMessage` to be more human-friendly, grep for existing tests asserting on the *old* message content (e.g. `toMatch(/uuid|format/)`). A `format: uuid` field's custom message should still signal "UUID" if a test already keys off that word — `"X must be a valid UUID"` satisfies both the human-readability bar and the existing test.
