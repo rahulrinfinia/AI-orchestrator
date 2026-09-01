@@ -1,0 +1,76 @@
+# Slice status — his-global-south / patient-screening-assessments
+
+project: his-global-south
+feature: patient-screening-assessments
+epic: null
+base_branch: develop
+branch: feat/platform-admin-hospitals   # NOTE: implemented on the existing branch in progress, not a fresh feat/patient-screening-assessments branch as originally proposed — build-app.ts and frontdesk.constants.ts carry mixed unstaged diffs with unrelated platform-admin-hospitals work. Separate at commit time with git add -p, or accept a combined commit.
+gate_g1_ticket_design: approved
+approved_by: Rahul Ranjan
+approved_at: 2026-08-24
+
+slices:
+  psa-1:
+    title: Schema + backend module (definitions, phase assignments, responses) + seed HIV/TB definitions
+    status: implemented
+    plan_ready: true
+    depends_on: []
+    spec: prd/his-global-south/patient-screening-assessments/technical-design.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+
+  psa-2:
+    title: Frontend DynamicAssessment component + registration page wiring
+    status: implemented
+    plan_ready: true
+    depends_on: [psa-1]
+    spec: prd/his-global-south/patient-screening-assessments/technical-design.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+    note: Verified against the real dev stack (Docker: api rebuilt, db:migrate run, seeded data confirmed in Postgres, all 3 routes live). Not verified via actual browser click-through — no browser automation tool available this session.
+
+  psa-3:
+    title: Tests (schema validation, showIf/discontinueIf logic, audit log emission)
+    status: implemented
+    plan_ready: true
+    depends_on: [psa-1, psa-2]
+    spec: prd/his-global-south/patient-screening-assessments/technical-design.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+    note: 12 tests added (3 definitions resolution, 5 responses/completion incl. PHI-safety of audit log, 4 DynamicAssessment showIf/discontinueIf). All passing, tsc + eslint clean.
+
+  psa-4:
+    title: Platform-admin management UI — create definitions (guided question builder) + assign to hospital/phase
+    status: implemented
+    plan_ready: true
+    depends_on: [psa-1, psa-2]
+    spec: prd/his-global-south/patient-screening-assessments/technical-design.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+    note: New requirement, added mid-feature. platform_admin-gated (assertPlatformAdmin, matches org.service.ts convention). No edit-existing-definition support by design (see technical-design.md rationale). No tests yet for this slice. Test account -- platform@flowmd.ai / FlowMD2026!.
+
+  psa-5:
+    title: Doctor/nurse-only visibility of registration screening answers, shown at encounter/intake
+    status: implemented
+    plan_ready: true
+    depends_on: [psa-1, psa-2]
+    spec: prd/his-global-south/patient-screening-assessments/technical-design.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+    note: New SCREENING_VIEW_ROLES narrows GET /responses to doctor/nurse(+admin tiers) -- completion check stays open (no PHI). Found and clearly separated from a pre-existing, unrelated TBScreening.tsx ROS panel already in the same two screens (user's call -- keep both, label clearly). Verified live end-to-end for both real doctor and nurse accounts (no nurse account existed in seed data -- added nurse role to debug@flowmd.ai). Two real UI bugs found via user testing and fixed: Finish button (17ca3c9) and sidebar highlighting (d49b37d), both independently confirmed backend-correct before fixing frontend.
+
+  psa-6:
+    title: Edit an existing definition (new version + auto re-point assignments)
+    status: implemented
+    plan_ready: true
+    depends_on: [psa-1, psa-4]
+    spec: prd/his-global-south/patient-screening-assessments/technical-design.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+    note: Closes the v1 "no edit" limitation properly -- PUT /api/screening/definitions/:id creates a new version and re-points every assessment_phase_assignments row in one transaction; old version stays in the table (inactive), never deleted, so existing responses keep resolving to what was actually asked. Verified live with a throwaway test definition (created, edited, confirmed re-point, cleaned up -- demo HIV/TB data untouched). No automated test yet for this transaction specifically.

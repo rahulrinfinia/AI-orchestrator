@@ -1,14 +1,10 @@
 # Reports
 
-Audit trail — git is code truth; this folder is **human-readable history**.
+Audit trail after execution. Git in this hub tracks plans; reports record what happened in cloned repos.
 
 | Folder | After |
 |--------|-------|
-| `features/` | implement slice / feature |
-| `bugs/` | bug fix |
-| `chores/` | chore |
-| `pr-reviews/` | pr-review-implement |
-| `code-reviews/` | code review |
-| `tests/` | test-implement |
-
-Naming: `<branch-or-topic>-report.md`
+| `reports/features/` | `implement-slice` |
+| `reports/code-reviews/` | Human or AI code review |
+| `reports/pr-reviews/` | PR feedback addressed |
+| `reports/tests/` | Test implementation |

@@ -1,5 +1,7 @@
 # Step-by-step — complete guide
 
+> **his-global-south / IPD:** See [architecture/his-global-south.md](architecture/his-global-south.md) and [specs/features/his-global-south/ipd-slice-0-scaffold.md](../specs/features/his-global-south/ipd-slice-0-scaffold.md). Use `projects/his-global-south/`.
+
 **Start here.** This doc covers setup, features, tests, code review, PR review, who does what, and what to say at each step.
 
 Conceptual background: [ai-driven-development.md](ai-driven-development.md)  

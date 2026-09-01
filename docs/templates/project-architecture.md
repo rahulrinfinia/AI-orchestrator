@@ -4,7 +4,7 @@
 
 | Item | Value |
 |------|--------|
-| Clone | `projects/<name>/` |
+| Clone | `backend/<name>/` |
 | Remote | _(git URL)_ |
 | Pattern | Modular monolith — React SPA + Fastify API |
 | Database | PostgreSQL 16 |

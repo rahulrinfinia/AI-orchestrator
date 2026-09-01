@@ -1,5 +1,7 @@
 # AI-driven development — how this works
 
+> **his-global-south:** See [architecture/his-global-south.md](architecture/his-global-south.md). Legacy `projects/ipd/` references below are obsolete.
+
 A plain-language guide to **what** AI-driven development means in this workspace, **why** it is structured this way, and **how** humans and agents work together.
 
 For day-to-day commands see [step-by-step.md](step-by-step.md) and [how-it-works.md](how-it-works.md). For coding standards see [conventions/README.md](conventions/README.md).
@@ -148,7 +150,7 @@ Confusion often comes from mixing document levels. Keep them separate:
 | System | Architecture (HLD) | `docs/architecture/ipd.md` | Modules, deploy, data overview |
 | Feature | Technical design | `prd/.../technical-design.md` | Endpoints, migrations for this epic |
 | Slice | Implementation plan (LLD) | `specs/features/ipd/slice-1.md` | Exact files, steps, tests |
-| Decision | ADR | `docs/decisions/ipd/0002-….md` | Why Better Auth, why Postgres |
+| Decision | ADR | `docs/decisions/ipd/0002-jwt-redis-auth.md` | Why JWT + Redis (FlowMD LLD) |
 | Living | Service doc | `docs/services/ipd.md` | What exists in code today |
 
 Architecture is **not** built from slice plans — slice plans **implement** architecture.

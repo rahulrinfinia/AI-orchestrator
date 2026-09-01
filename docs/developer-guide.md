@@ -51,12 +51,12 @@ Slice 1 = tracer bullet (UI → API → DB). You approve slice order.
 
 ### 5. Plan slice (Gate G4)
 
-For each slice: `specs/features/<project>/slice-N-*.md` with exact files in `projects/<project>/`.  
+For each slice: `specs/features/<project>/slice-N-*.md` with exact files in `backend/<project>/`.  
 You approve → then implement.
 
 ### 6. Implement
 
-Agent works in `projects/<project>/`: branch, code, tests, validation commands, PR, `reports/features/...`.
+Agent works in `backend/<project>/`: branch, code, tests, validation commands, PR, `reports/features/...`.
 
 ### 7. Pre-review & code review
 

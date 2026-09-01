@@ -1,0 +1,95 @@
+# Slice status — his-global-south / patient-registration-identity-profile
+
+
+
+project: his-global-south
+
+feature: patient-registration-identity-profile
+
+branch: feat/ipd-emergency-registration
+
+gate_g3_slices_approved: 2026-08-20
+
+
+
+slices:
+
+  - id: patient-registration-identity-profile-pri-1-api-db
+
+    spec: specs/features/his-global-south/patient-registration-identity-profile-pri-1-api-db.md
+
+    status: implemented
+
+    branch: feat/ipd-emergency-registration
+
+    depends_on: []
+
+    goal: Migration, pgschema, patient service identity persist/read, dedup + identifiers sync
+
+    report: reports/features/patient-registration-identity-profile-pri-1-report.md
+
+
+
+  - id: patient-registration-identity-profile-pri-2-identity-profile-api
+
+    spec: specs/features/his-global-south/patient-registration-identity-profile-pri-2-identity-profile-api.md
+
+    status: implemented
+
+    branch: feat/ipd-emergency-registration
+
+    depends_on: [patient-registration-identity-profile-pri-1-api-db]
+
+    goal: identity-profiles JSON, loader, GET identity-profile, server validation
+
+    report: reports/features/patient-registration-identity-profile-pri-2-report.md
+
+
+
+  - id: patient-registration-identity-profile-pri-3-registration-ui
+
+    spec: specs/features/his-global-south/patient-registration-identity-profile-pri-3-registration-ui.md
+
+    status: implemented
+
+    branch: feat/ipd-emergency-registration
+
+    depends_on: [patient-registration-identity-profile-pri-1-api-db, patient-registration-identity-profile-pri-2-identity-profile-api]
+
+    goal: Registration Step 1 — locked nationality, profile doc types, HIE unchanged
+
+    report: reports/features/patient-registration-identity-profile-pri-3-report.md
+
+
+
+  - id: patient-registration-identity-profile-pri-4-display-completion
+
+    spec: specs/features/his-global-south/patient-registration-identity-profile-pri-4-display-completion.md
+
+    status: implemented
+
+    branch: feat/ipd-emergency-registration
+
+    depends_on: [patient-registration-identity-profile-pri-2-identity-profile-api, patient-registration-identity-profile-pri-3-registration-ui]
+
+    goal: Patient detail/list identity display + complete-registration identity fields
+
+    report: reports/features/patient-registration-identity-profile-pri-4-report.md
+
+
+
+  - id: patient-registration-identity-profile-pri-5-tests
+
+    spec: specs/features/his-global-south/patient-registration-identity-profile-pri-5-tests.md
+
+    status: implemented
+
+    branch: feat/ipd-emergency-registration
+
+    depends_on: [patient-registration-identity-profile-pri-1-api-db, patient-registration-identity-profile-pri-2-identity-profile-api, patient-registration-identity-profile-pri-3-registration-ui, patient-registration-identity-profile-pri-4-display-completion]
+
+    goal: Backend, frontend, and integration regression tests
+
+    report: reports/features/patient-registration-identity-profile-pri-5-report.md
+
+

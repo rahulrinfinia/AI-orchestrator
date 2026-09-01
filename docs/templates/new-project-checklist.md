@@ -6,7 +6,7 @@ Copy this when registering a **second (or later) product** in the hub — same p
 
 - [ ] App repo created (GitHub)
 - [ ] Entry in `repos.yaml`
-- [ ] `.\scripts\setup.ps1` → `projects/<name>/`
+- [ ] `.\scripts\setup.ps1` → `backend/<name>/`
 
 ## 2. Hub documentation (required)
 
@@ -30,7 +30,7 @@ Copy this when registering a **second (or later) product** in the hub — same p
 
 | Path | Purpose |
 |------|---------|
-| `projects/<name>/.cursor/rules/` | backend, frontend, security |
+| `backend/<name>/.cursor/rules/` | backend, frontend, security |
 | `.github/workflows/` | CI |
 
 ## 5. Same stack?

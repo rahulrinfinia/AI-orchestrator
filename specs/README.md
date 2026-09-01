@@ -1,16 +1,15 @@
 # Specs
 
-Implementation plans — **what to code** after product/architecture is approved.
+Implementation plans — source of truth for **what to code** in `projects/<name>/`.
 
-| Folder | Created by |
-|--------|------------|
-| `features/<project>/` | plan-slice, feature-orchestrator, feature |
-| `bugs/` | bug |
-| `chores/` | chore |
-| `stories/<project>/` | create-stories, user-stories |
-| `pr-reviews/` | pr-review |
-| `tests/unit/` | test-plan |
-| `tests/integration/` | test-plan-integration |
-| `tests/contracts/` | test-plan-contracts |
+| Folder | Purpose |
+|--------|---------|
+| `specs/features/<project>/` | Slice and feature implementation plans |
+| `specs/bugs/` | Bug fix plans |
+| `specs/chores/` | Refactor / maintenance plans |
+| `specs/pr-reviews/` | Plans to address PR feedback |
+| `specs/tests/unit/` | Unit test plans |
+| `specs/tests/integration/` | Integration test plans |
+| `specs/tests/e2e/` | E2E test plans |
 
-Implement only from approved specs (`## Approval` section complete).
+Every plan must include `## Approval` before implement runs.

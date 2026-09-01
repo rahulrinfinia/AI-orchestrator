@@ -1,0 +1,263 @@
+# Slice status — his-global-south / emergency-triage
+
+project: his-global-south
+feature: emergency-triage
+epic: null
+base_branch: feat/platform-admin-hospitals
+branch: feat/emergency-triage
+gate_g1_prd: supplied-by-product   # PRD v2.0, "Ready for build" per product — not a hub-authored PRD
+full_regression_check_2026-08-26: >
+  Backend full suite (44 files / 331 tests) and frontend full suite (105 files /
+  977 tests, run twice) both 100% pass. Two frontend tests flaky-timed-out under
+  full-suite CPU load in the first run (@/modules/clinical and @/modules/index
+  barrel-import tests) — confirmed as test-infra flakiness, not a regression, via
+  isolated re-run (both pass in <3s) and a clean second full run (0 failures).
+  Manual line-by-line diff review of all 13 modified files: pure additions except
+  the deliberate, user-approved EncountersStatsCards.tsx label fix.
+gate_g2_technical_design: approved
+approved_by: Rahul Ranjan
+approved_at: 2026-08-26
+# All 4 open questions in technical-design.md §10 resolved 2026-08-26:
+#   1. Role scoping — ed_nurse/ed_doctor as additive new roles, no opd_nurse/opd_doctor
+#   2. hiv_tb_answers column dropped, reuse screening engine's assessment_responses
+#   3. OI-4/OI-5 (TEWS formula, Urgent Signs list) — provisional SATS-based standard shipped now
+#      (technical-design.md §8.1/§8.2), mandatory "Provisional" UI badge, real clinical
+#      sign-off tracked as a pre-go-live follow-up, not a build blocker
+#   4. Order deep-link query param — deferred to slice 1, not blocking
+
+gate_g3_slices: awaiting-approval   # decomposed 2026-08-26, see slices/README.md — fill Approval block on ET-1 first
+
+slices:
+  et-1:
+    title: Encounter model extension + ed_nurse/ed_doctor roles + emergency inflow flag
+    status: implemented
+    plan_ready: true
+    depends_on: []
+    spec: prd/his-global-south/emergency-triage/slices/slice-1.md
+    plan: specs/features/his-global-south/emergency-triage-et-1-encounter-model-roles.md
+    branch: feat/emergency-triage
+    pr: null
+    merged_at: null
+    note: >
+      Migration 008_emergency_triage_encounter_columns.sql applied and verified live
+      (docker exec + direct writes, not just types/tests): emergency-type encounter
+      creation via the real createEncounter() path now sets triage_status=pending,
+      current_step=triage, arrived_at; OPD path unaffected (regression-checked).
+      106 backend tests pass, tsc/lint clean. Found and fixed one gap not caught at
+      design time: SERVICE_LINE_VISIT_TYPES didn't include 'emergency', which would
+      have blocked the whole pathway on the pre-existing intake-completion guard —
+      see technical-design.md §5.1 for the full note. Test rows cleaned up after
+      verification.
+
+  et-2:
+    title: ER nurse list + ED doctor list (Encounter sidebar filter presets, priority sort)
+    status: implemented
+    plan_ready: true
+    depends_on: [et-1]
+    spec: prd/his-global-south/emergency-triage/slices/slice-2.md
+    plan: specs/features/his-global-south/emergency-triage-et-2-er-lists.md
+    branch: feat/emergency-triage
+    pr: null
+    merged_at: null
+    note: >
+      Course-corrected during planning: original technical-design.md §7 wrongly assumed
+      GET /api/clinical/encounters backed the queue page; real endpoint is
+      GET /api/frontdesk/visits (listVisits(), client-side bucketing). Both docs
+      corrected before implementing. MRN naming (not UMR, per PRD) confirmed with
+      user = patient.patientId. Extended listVisits()'s active_enc LATERAL join with
+      6 triage columns; added ErPendingList/ErTriagedList/TriagePriorityBadge; two
+      role-gated tabs (ed_nurse/ed_doctor) via useAuth()/profile.roles, same pattern
+      as AppSidebar. Verified live: real emergency + OPD test encounters through
+      createEncounter() -> listVisits(), correct field population both ways, test
+      rows cleaned up. 40 backend + 20 frontend tests pass, tsc/lint clean (one
+      import-boundary lint fix: TriagePriorityBadge re-exported via modules/clinical
+      barrel). No browser click-through — no browser automation tool available this
+      session, and no ed_nurse/ed_doctor test account exists yet (seeding one is an
+      ops task, out of scope for ET-1/ET-2).
+
+  et-3:
+    title: Emergency Triage form + priority engine (BR-3) + save API + doctor gate (BR-4)
+    status: implemented
+    plan_ready: true
+    depends_on: [et-1, et-2]
+    spec: prd/his-global-south/emergency-triage/slices/slice-3.md
+    plan: specs/features/his-global-south/emergency-triage-et-3-triage-form.md
+    branch: feat/emergency-triage
+    pr: null
+    merged_at: null
+    note: >
+      Largest slice, two course corrections found during planning (both in
+      technical-design.md/slice-3.md before implementing): (1) EmergencyTriageDialog
+      mirrors NurseIntakeDialog's controlled-dialog pattern, not a ConsultationWorkspace
+      tab (that page is doctor-only SOAP note). (2) Real BR-4 bypass found: ET-1's
+      SERVICE_LINE_VISIT_TYPES fix was backend-only — the frontend has a SEPARATE
+      copy in visits.service.ts that was never synced, so "Start Intake" (not "Start
+      Consultation") was the actual live bug. Fixed both: synced the frontend set,
+      then added the emergency+triage-not-complete guard on "Start Consultation" so
+      neither button offers a path around triage.
+
+      Also found and fixed a third SERVICE_LINE_VISIT_TYPES ripple during user
+      review: getVisitStats().service_line_count now includes emergency visits;
+      user chose to fix the stat card's label rather than exclude emergency from
+      the count (EncountersStatsCards.tsx, "Lab, imaging, pharmacy, emergency").
+
+      Built: migration 009 (emergency_triage_records + emergency_triage_alerts,
+      no hiv_tb_answers column per the earlier resolved decision), full
+      emergencyTriage/ backend module (routes/controller/service/schema/constants),
+      computeTriagePriority() + computeTewsScore() as pure functions (12 unit tests,
+      all BR-3 branches + boundary cases), EmergencyTriageDialog/Form (BR-1/BR-2 mode
+      switching, mandatory Provisional badges on TEWS/Urgent Signs per §8.1/§8.2),
+      BR-5 lock (no PATCH route, second save rejected 409).
+
+      Verified live end-to-end: P4 happy path and P1/resuscitation path (alert row
+      confirmed written) through the real createEncounter() -> saveEmergencyTriage()
+      -> getEmergencyTriage() chain, BR-5 second-save rejection confirmed, encounter
+      state flip confirmed (triage_status/current_step/triage_priority). Test rows
+      cleaned up.
+
+      Full regression re-verified after user asked twice to double-check: backend
+      45 files / 343 tests pass (twice); frontend 977 tests, one test
+      (@/modules/clinical barrel import) flaky-timeouts only under full-suite CPU
+      load, confirmed clean (1.8-2.6s) in isolation 3 separate times across the
+      session, including against the exact barrel file this slice modified twice.
+      tsc/eslint clean on every touched file both sides.
+
+      Post-implementation bug found and fixed while starting ET-4 planning
+      (2026-08-26): listVisits()'s active_enc LATERAL join never selected the
+      encounter's own id (only visit fields via v.*), so ErPendingList.tsx's row
+      `id` was actually the VISIT id, not the encounter id EmergencyTriageDialog
+      needs. Every real click-through would have 404'd. Never caught by direct
+      service-call verification (which always used the correct encounter id
+      explicitly) — only surfaced by tracing the actual UI data flow end-to-end.
+      Fixed: listVisits() now also selects e.id AS encounter_id, surfaced on the
+      frontend as Encounter.activeEncounterId; ErPendingList.tsx uses that instead
+      of the visit id. Verified live (activeEncounterId matches the real
+      createEncounter() result exactly). Targeted regression suite re-run, 108/108
+      pass.
+
+  et-4:
+    title: HIV/TB block — reuse screening engine at the triage phase
+    status: implemented
+    plan_ready: true
+    depends_on: [et-3]
+    spec: prd/his-global-south/emergency-triage/slices/slice-4.md
+    plan: specs/features/his-global-south/emergency-triage-et-4-hiv-tb-block.md
+    branch: feat/emergency-triage
+    pr: null
+    merged_at: null
+    note: >
+      Smaller than planned once verified: no new definitions needed, just 2 new
+      assessment_phase_assignments rows (migration 010) pointing the EXISTING
+      hiv_risk_screening/tb_symptom_screening v1 definitions at phase='triage'.
+      Zero new tables/storage confirmed (AC-15).
+
+      Careful fix for a shared-constant risk: did NOT add ed_nurse/ed_doctor to
+      CLINICAL_ROLES directly (that set is spread into LAB_ROLES/RADIOLOGY_ROLES/
+      PHARMACY_ROLES too — same class of mistake as the SERVICE_LINE_VISIT_TYPES
+      ripple earlier). Instead added a new TRIAGE_PHASE_ROLES superset, mirroring
+      the existing LAB_ROLES pattern. SCREENING_VIEW_ROLES got ed_doctor added
+      directly since it's confirmed used in exactly one place.
+
+      Threaded patientId/visitId through EmergencyTriageDialog -> Form (ET-3 never
+      had these), mounted ScreeningAssessments in full-form mode only per BR-1.
+
+      Platform-admin UI needed zero changes — SCREENING_PHASE.TRIAGE already had
+      a labeled option there, confirmed by reading the code, not assumed.
+
+      Verified live end-to-end: resolveAssignmentsForPhase('triage') returns both
+      definitions, role gates checked directly (ed_nurse/plain nurse can submit,
+      ed_doctor can view, receptionist cannot), a real submission through
+      createResponse() persisted correctly (phase=triage, answered_by_role=
+      ed_nurse) - confirmed via direct DB query. Test data cleaned up.
+
+      Full backend regression re-run: 45 files / 343 tests pass.
+
+  et-5:
+    title: Resuscitation alert fan-out (P1) + doctor read-only triage summary
+    status: implemented
+    plan_ready: true
+    depends_on: [et-3]
+    spec: prd/his-global-south/emergency-triage/slices/slice-5.md
+    plan: specs/features/his-global-south/emergency-triage-et-5-alerts-summary.md
+    branch: feat/emergency-triage
+    pr: null
+    merged_at: null
+    note: >
+      Three course corrections found during planning, all folded into the docs
+      before implementing: (1) no existing "toast on SSE event" pattern existed
+      anywhere in the codebase — useRealtimeSync was purely cache-invalidation,
+      this slice built the first one; (2) dropped a planned duplicate
+      /emergency-triage/summary endpoint — ET-3's existing GET already serves
+      this, reused instead; (3) user explicitly chose the PRD-literal
+      ConsultationWorkspace stage-nav integration over the originally-proposed
+      dialog-reuse fallback. Investigated that page properly before building:
+      CONSULTATION_STAGES/activeStageIndex/handleBack/handleNext needed zero
+      changes, IntakeTab already self-wraps in its own TabsContent slot (new
+      component occupies the same slot conditionally), and clinicalEncounterId
+      (the real encounters.id, distinct from the route's visitId) was already
+      resolved with an existing idempotent fallback path — confirmed by reading
+      the code before claiming it was safe, not assumed.
+
+      Built: new typed EmergencyTriageP1AlertEvent (event-bus.ts) + SSE bridge
+      registration (purely additive to existing 17-member DomainEvent union and
+      SSE_BRIDGE_EVENT_TYPES list); emit happens after the save transaction
+      commits, not nested inside it; useRealtimeSync gets a new switch case
+      gated on profile.roles including ed_doctor (role read via a ref, avoiding
+      EventSource reconnects on every profile object change); extracted a
+      shared EmergencyTriageSummary presentational component (richer than
+      ET-3's original 4-line inline version) reused by both the dialog's
+      locked-view branch and the new ConsultationWorkspace tab; ConsultationStageNav
+      gets a new optional encounterType prop, swapping "Intake" for "Emergency
+      Triage" only for emergency encounters.
+
+      Verified live: real P1 save fires the event with exactly correct
+      encounterId/patientId/organizationId (temporary event-bus listener,
+      same technique as prior slices); real P4 save confirmed does NOT fire it;
+      doctor-summary read path (getEmergencyTriage, the same function
+      EmergencyTriageSummaryTab calls) confirmed returns the right record.
+      Test data cleaned up. Full backend regression: 45 files / 343 tests pass.
+      No browser automation tool available — toast appearance, tab-label swap,
+      and stage-nav visuals were not visually confirmed, stated plainly rather
+      than claimed.
+
+  et-6:
+    title: Order deep links (Nursing/POC Orders, POC Result Entry, Medication Order)
+    status: implemented
+    plan_ready: true
+    depends_on: [et-3]
+    spec: prd/his-global-south/emergency-triage/slices/slice-6.md
+    plan: specs/features/his-global-south/emergency-triage-et-6-order-links.md
+    branch: feat/emergency-triage
+    pr: null
+    merged_at: null
+    note: >
+      Real mapping gap found and flagged before building, user approved: this
+      codebase has no "Nursing"/"POC" order page at all (repo-wide search, zero
+      matches) — only Laboratory and Radiology under /orders. Mapped "Nursing
+      and POC Orders" and "POC Result Entry" onto the existing lab-orders page's
+      new/track tabs (matches the triage form's own RBS/Urine/ECG/POCT
+      investigations fields).
+
+      Found the actual work was smaller than expected on the orders side:
+      LabOrderForm/RadiologyOrderForm already accepted encounterId/patientId
+      prefill props — Orders.tsx just never read them from the URL or passed
+      them through. Prescriptions needed more: PrescriptionForm took zero props
+      and called useOrderPatientSearch() with no argument even though the hook
+      already supported prefilling. Found and documented a genuine data-model
+      limit while there: prescriptions have no encounterId field at all in this
+      schema (unlike diagnostic_orders' billing_encounter_id) — Medication Order
+      can only prefill the patient, not the encounter, which is correct scope,
+      not an oversight.
+
+      Added the "Orders and procedures" section to EmergencyTriageForm (never
+      built in ET-3, explicitly deferred) — all 3 links open in a new tab
+      (preserves the nurse's in-progress triage form state) and, confirmed by
+      code inspection, render outside the resuscitation-mode conditional so
+      they stay visible in both modes per BR-1's exception list.
+
+      Pure frontend slice, zero backend changes. tsc/eslint clean on every
+      touched file. Backend regression re-run anyway for completeness: 45
+      files / 343 tests pass, unaffected as expected.
+
+      This closes emergency-triage — all 6 slices (ET-1 through ET-6) now
+      implemented.

@@ -29,14 +29,14 @@ This document defines **development standards**. Legal/compliance sign-off (BAA,
 
 ### Authentication and access
 
-- Better Auth with secure, httpOnly session cookies
+- JWT bearer auth; short-lived access token in memory (not localStorage); see ADR 0002
 - Session timeout: configure per org policy (default target: 15–30 min idle)
 - Role-based access control (RBAC) on every PHI endpoint
 - Principle of least privilege for staff roles
 
 ### Audit logging
 
-Required for PHI access and mutations. See ADR `docs/decisions/ipd/0004-audit-logging-for-phi-access.md`.
+Required for PHI access and mutations. See ADR `docs/decisions/his-global-south/0004-audit-logging-for-phi-access.md`.
 
 Log events:
 
@@ -91,4 +91,4 @@ Before merging PHI-touching code:
 
 - `docs/conventions/security.md` — general security baseline
 - `docs/conventions/api-design.md` — error envelope, IDOR prevention
-- `docs/decisions/ipd/0004-audit-logging-for-phi-access.md`
+- `docs/decisions/his-global-south/0004-audit-logging-for-phi-access.md`

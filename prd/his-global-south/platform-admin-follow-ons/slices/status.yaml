@@ -1,0 +1,79 @@
+# Slice status — his-global-south / platform-admin-follow-ons
+
+project: his-global-south
+feature: platform-admin-follow-ons
+epic: null
+base_branch: develop
+branch: null
+
+slices:
+  paf-1:
+    title: SMTP invite reliability
+    status: implemented
+    plan_ready: true
+    depends_on: []
+    spec: specs/features/his-global-south/platform-admin-follow-ons-paf-1-smtp.md
+    branch: null
+    pr: null
+    merged_at: null
+
+  paf-2:
+    title: Invite status and update hospital admin
+    status: implemented
+    plan_ready: true
+    depends_on: [paf-1]
+    spec: specs/features/his-global-south/platform-admin-follow-ons-paf-2-admin-invite.md
+    branch: null
+    pr: null
+    merged_at: null
+
+  paf-3:
+    title: Suspend and reactivate hospital
+    status: implemented
+    plan_ready: true
+    depends_on: [paf-2]
+    spec: specs/features/his-global-south/platform-admin-follow-ons-paf-3-suspend.md
+    branch: null
+    pr: null
+    merged_at: null
+
+  paf-4:
+    title: Read-only hospital health
+    status: implemented
+    plan_ready: true
+    depends_on: [paf-3]
+    spec: specs/features/his-global-south/platform-admin-follow-ons-paf-4-health.md
+    branch: null
+    pr: null
+    merged_at: null
+
+  paf-5:
+    title: Gate IPD and OPD by org flags
+    status: pending
+    plan_ready: false
+    depends_on: [paf-4]
+    spec: null
+    branch: null
+    pr: null
+    merged_at: null
+
+  paf-6:
+    title: Shared reference data access
+    status: parked
+    plan_ready: false
+    depends_on: []
+    spec: null
+    branch: null
+    pr: null
+    merged_at: null
+    note: Separate epic (platform-reference-ownership). Not in PAF-7.
+
+  paf-7:
+    title: Audited support view
+    status: implemented
+    plan_ready: true
+    depends_on: [paf-4]
+    spec: specs/features/his-global-south/platform-admin-follow-ons-paf-7-support.md
+    branch: null
+    pr: null
+    merged_at: null

@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "name": "Hub (plans & specs)",
+      "path": "."
+    },
+    {
+      "name": "App — his-global-south",
+      "path": "projects/his-global-south"
+    }
+  ],
+  "settings": {
+    "explorer.excludeGitIgnore": false
+  }
+}

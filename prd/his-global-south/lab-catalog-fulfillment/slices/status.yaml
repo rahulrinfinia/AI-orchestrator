@@ -1,0 +1,30 @@
+# Slice status — lab-catalog-fulfillment
+
+project: his-global-south
+epic: null
+
+slices:
+  slice-1:
+    title: "LCF-1 — Fulfilment type on enrollment (DB + API + Catalog Browser)"
+    status: implemented
+    depends_on: []
+    spec: prd/his-global-south/lab-catalog-fulfillment/slices/slice-1.md
+    branch: feat/lab-catalog-fulfillment
+    pr: null
+    merged_at: null
+  slice-2:
+    title: "LCF-2 — Enrolled-only picker + catalog resolve + order create"
+    status: implemented
+    depends_on: [slice-1]
+    spec: prd/his-global-south/lab-catalog-fulfillment/slices/slice-2.md
+    branch: feat/lab-catalog-fulfillment
+    pr: null
+    merged_at: null
+  slice-3:
+    title: "LCF-3 — Vendor guard UX + consultation alignment + regression"
+    status: implemented
+    depends_on: [slice-2]
+    spec: prd/his-global-south/lab-catalog-fulfillment/slices/slice-3.md
+    branch: feat/lab-catalog-fulfillment
+    pr: null
+    merged_at: null

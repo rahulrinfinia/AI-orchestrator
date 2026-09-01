@@ -157,7 +157,7 @@ Integration tests may use a `test` script profile:
 | `test-plan` | `specs/tests/unit/` |
 | `test-plan-integration` | `specs/tests/integration/` |
 | `test-plan-contracts` | `specs/tests/contracts/` |
-| `test-implement` | Code in `projects/<name>/` |
+| `test-implement` | Code in `backend/<name>/` |
 
 ## Related
 

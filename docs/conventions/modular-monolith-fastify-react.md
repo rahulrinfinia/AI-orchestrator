@@ -1,6 +1,6 @@
 # Modular monolith (Fastify + React) — index
 
-Apply in cloned app repos under `projects/<name>/`.
+Apply in cloned app repos under `backend/<name>/`.
 
 ## Convention documents
 

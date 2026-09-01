@@ -1,7 +1,11 @@
 # Feature plans
 
-One folder per project name (matches `prd/<project>/` and `projects/<project>/`).
+**Project-keyed:** `specs/features/<project>/`
 
-Example: `specs/features/flowmd/slice-1-tracer-auth-dashboard.md`
+Current work:
 
-Implement only after `## Approval` is complete in the plan file.
+```text
+specs/features/his-global-south/ipd-slice-0-scaffold.md   ← approve then implement
+```
+
+Implement in `projects/his-global-south/` only after `## Approval` is complete.

@@ -1,6 +1,6 @@
 # Security conventions (healthcare-aware)
 
-Apply when building apps under `projects/` that handle PHI or sensitive data.
+Apply when building apps under `backend/` that handle PHI or sensitive data.
 
 For PHI and healthcare apps, see **[hipaa.md](hipaa.md)** (full framework).
 

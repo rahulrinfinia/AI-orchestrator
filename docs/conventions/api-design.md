@@ -104,7 +104,8 @@ Query params (snake_case):
 
 ## Auth
 
-- Session cookie (Better Auth) for browser clients
+- **his-global-south / IPD:** Better Auth — [ADR 0008](../decisions/his-global-south/0008-better-auth-session-cookie.md)
+- **Generic API clients:** JWT bearer where applicable
 - `401` if not authenticated
 - `403` if authenticated but insufficient role/permission
 - Document required roles in `docs/contracts/<project>/`

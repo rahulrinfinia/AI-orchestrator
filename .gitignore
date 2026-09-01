@@ -1,17 +1,9 @@
-# Cloned application repos (each has its own git history)
-/projects/*/
+# Cloned app repos live under projects/<name>/ — each has its own .git inside.
+# Hub git does not track clone contents (nested repo); files stay VISIBLE in Cursor.
+# Do not `git add projects/` from the hub.
 
-# Keep directory structure
-!projects/.gitkeep
-
-# Design / mockup assets (large binaries — track links in prd/, not raw exports)
-/mockups/**
-!/mockups/.gitkeep
-**/design/exports/
-
-# Specs — only track subdirectories, not loose files in specs root
-/specs/*
-!/specs/*/
+# Keep hub docs in projects/
+!projects/README.md
 
 # OS / editor
 .DS_Store
@@ -19,18 +11,12 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
-*.swo
 
-# Cursor — user-specific (machine-local)
-.cursor/projects/
-
-# Environment
+# Env
 .env
 .env.local
-.env.*.local
 
-# Node / Python (workspace scripts only)
+# Node / Python (workspace scripts)
 node_modules/
 __pycache__/
-*.pyc
 .venv/

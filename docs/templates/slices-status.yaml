@@ -1,17 +1,14 @@
-# Slice status — update after each slice merges
-# status: pending | planned | in_progress | in_review | merged | blocked
+# Slice status (update after each slice merges)
 
 project: <project-name>
-updated: YYYY-MM-DD
+epic: null  # Jira epic key when mapped
 
 slices:
-  "1":
+  slice-1:
     title: ""
-    status: pending
-    spec: ""
-    branch: ""
-    pr: ""
-  "2":
-    title: ""
-    status: pending
-    blocked_by: []
+    status: pending  # pending | planned | in_progress | in_review | merged
+    depends_on: []
+    spec: null       # specs/features/<project>/slice-1-....md
+    branch: null
+    pr: null
+    merged_at: null

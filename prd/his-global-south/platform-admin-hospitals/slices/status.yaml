@@ -1,0 +1,38 @@
+# Slice status — his-global-south / platform-admin-hospitals
+
+project: his-global-south
+feature: platform-admin-hospitals
+epic: null
+base_branch: develop
+branch: feat/platform-admin-hospitals
+
+slices:
+  pah-1:
+    title: Create and list hospitals
+    status: implemented
+    plan_ready: true
+    depends_on: []
+    spec: specs/features/his-global-south/platform-admin-hospitals-pah-1-create-list.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+
+  pah-2:
+    title: Edit hospital and /me flags
+    status: implemented
+    plan_ready: true
+    depends_on: [pah-1]
+    spec: specs/features/his-global-south/platform-admin-hospitals-pah-2-edit-me.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null
+
+  pah-3:
+    title: Role lock, 403 tests, runbook
+    status: implemented
+    plan_ready: true
+    depends_on: [pah-2]
+    spec: specs/features/his-global-south/platform-admin-hospitals-pah-3-hardening.md
+    branch: feat/platform-admin-hospitals
+    pr: null
+    merged_at: null

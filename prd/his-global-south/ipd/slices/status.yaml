@@ -1,0 +1,129 @@
+# Slice status — his-global-south / IPD feature
+
+project: his-global-south
+feature: ipd
+branch: develop
+
+slices:
+  - id: ipd-slice-0-scaffold
+    spec: specs/features/his-global-south/ipd-slice-0-scaffold.md
+    status: implemented
+    branch: feat/his-global-south-slice-0-scaffold
+    note: Code in projects/his-global-south/ — pushed without user approval; open PR manually if desired
+    depends_on: []
+    goal: IPD plugin + health API + /ipd/v1 UI shell
+
+  - id: ipd-slice-1-org-flags
+    spec: specs/features/his-global-south/ipd-slice-1-super-admin-hospitals.md
+    status: superseded
+    note: Use prd/his-global-south/platform-admin-hospitals/ instead (platform_admin role)
+    depends_on: [ipd-slice-0-scaffold]
+    goal: Super Admin create hospital + opd_enabled/ipd_enabled on organizations (API + UI)
+
+  - id: ipd-emergency-registration
+    prd: prd/his-global-south/ipd-emergency-registration/prd.md
+    technical_design: prd/his-global-south/ipd-emergency-registration/technical-design.md
+    status: planned
+    branch: feat/ipd-emergency-registration
+    depends_on: [ipd-slice-0-scaffold]
+    goal: Emergency register button + registration_mode=emergency + complete registration later
+    decomposition: complete
+    slices:
+      - id: ipd-emergency-registration-er-1-api-db
+        spec: specs/features/his-global-south/ipd-emergency-registration-er-1-api-db.md
+        status: implemented
+        branch: feat/ipd-emergency-registration
+        note: Uncommitted WIP in projects/his-global-south/ on feat/ipd-emergency-registration
+        depends_on: [ipd-slice-0-scaffold]
+        goal: Patient registration metadata, emergency create API, and backend tests
+      - id: ipd-emergency-registration-er-2-ui
+        spec: specs/features/his-global-south/ipd-emergency-registration-er-2-ui.md
+        status: implemented
+        branch: feat/ipd-emergency-registration
+        note: Uncommitted WIP in projects/his-global-south/ on feat/ipd-emergency-registration
+        depends_on: [ipd-emergency-registration-er-1-api-db]
+        goal: Emergency registration form, entry buttons, and provisional badges
+      - id: ipd-emergency-registration-er-3-completion
+        spec: specs/features/his-global-south/ipd-emergency-registration-er-3-completion.md
+        status: planned
+        plan_ready: true
+        branch: feat/ipd-emergency-registration
+        depends_on: [ipd-emergency-registration-er-1-api-db, ipd-emergency-registration-er-2-ui]
+        goal: Complete-registration API, prefilled wizard, promotion, and tests
+
+  - id: ipd-admissions
+    prd: prd/his-global-south/ipd-admissions/prd.md
+    technical_design: prd/his-global-south/ipd-admissions/technical-design.md
+    ticket: prd/his-global-south/ipd-admissions/ticket.md
+    status: planned
+    base_branch: develop
+    branch: feat/ipd-admissions-atd
+    depends_on: [ipd-slice-0-scaffold]
+    goal: ATD — ipd_admissions_request table (ADR naming); list, walk-in, bed assign; OPD read-only link
+    decomposition: complete
+    note: Supersedes ipd-slice-3/4 for MVP; defers ipd-slice-5/6 (platform beds reuse). See prd/his-global-south/ipd-admissions/slices/status.yaml
+    slices:
+      - id: ipd-admissions-adm-0-sidebar-nav
+        spec: specs/features/his-global-south/ipd-admissions-adm-0-sidebar-nav.md
+        status: planned
+        plan_ready: true
+      - id: ipd-admissions-adm-1-api
+        spec: specs/features/his-global-south/ipd-admissions-adm-1-api.md
+        status: planned
+        plan_ready: true
+      - id: ipd-admissions-adm-2-ui-list-detail
+        spec: specs/features/his-global-south/ipd-admissions-adm-2-ui-list-detail.md
+        status: planned
+        plan_ready: true
+      - id: ipd-admissions-adm-3-ui-new-admission
+        spec: specs/features/his-global-south/ipd-admissions-adm-3-ui-new-admission.md
+        status: planned
+        plan_ready: true
+      - id: ipd-admissions-adm-4-bed-assign
+        spec: specs/features/his-global-south/ipd-admissions-adm-4-bed-assign.md
+        status: planned
+        plan_ready: true
+      - id: ipd-admissions-adm-5-tests
+        spec: specs/features/his-global-south/ipd-admissions-adm-5-tests.md
+        status: planned
+        plan_ready: true
+
+  - id: ipd-slice-2-event-bridge
+    spec: specs/features/his-global-south/ipd-slice-2-event-bridge.md
+    status: deferred
+    note: Optional for MVP — ATD reads visit_admissions directly; event for live refresh only
+    depends_on: [ipd-slice-0-scaffold, ipd-slice-1-org-flags]
+    goal: admission.advised → ipd_admissions_request
+
+  - id: ipd-slice-3-admissions-api
+    spec: specs/features/his-global-south/ipd-slice-3-admissions-api.md
+    status: superseded
+    note: Replaced by ipd-admissions-adm-1-api
+    depends_on: [ipd-slice-2-event-bridge]
+    goal: Admissions REST + disposition
+
+  - id: ipd-slice-4-admissions-ui
+    spec: specs/features/his-global-south/ipd-slice-4-admissions-ui.md
+    status: superseded
+    note: Replaced by ipd-admissions adm-0/2/3
+    depends_on: [ipd-slice-3-admissions-api]
+    goal: /ipd/v1/admissions queue UI
+
+  - id: ipd-slice-5-capacity-api
+    spec: specs/features/his-global-south/ipd-slice-5-capacity-api.md
+    status: deferred
+    note: MVP uses platform beds; revisit post ipd-admissions
+    depends_on: [ipd-slice-3-admissions-api]
+    goal: ipd_capacity_* + assign API
+
+  - id: ipd-slice-6-capacity-ui
+    spec: specs/features/his-global-south/ipd-slice-6-capacity-ui.md
+    status: deferred
+    depends_on: [ipd-slice-5-capacity-api]
+    goal: /ipd/v1/capacity bed board
+
+  - id: ipd-slice-7-ward-receipt
+    spec: specs/features/his-global-south/ipd-slice-7-ward-receipt.md
+    status: planned
+    depends_on: [ipd-slice-6-capacity-ui]
+    goal: MVP tracer complete

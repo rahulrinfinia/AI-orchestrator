@@ -1,0 +1,31 @@
+# Slice status — his-global-south / patient-registration-hie-dependents
+
+project: his-global-south
+feature: patient-registration-hie-dependents
+branch: feat/ipd-emergency-registration
+gate_g3_slices_approved: 2026-08-21
+
+slices:
+  - id: hie-dep-1-related-persons-db
+    spec: specs/features/his-global-south/hie-dep-1-related-persons-db.md
+    status: implemented
+    depends_on: [patient-registration-identity-profile-pri-1-api-db]
+    goal: patient_related_persons migration + pgschema
+
+  - id: hie-dep-2-hie-stub-dependents
+    spec: specs/features/his-global-south/hie-dep-2-hie-stub-dependents.md
+    status: implemented
+    depends_on: [hie-dep-1-related-persons-db]
+    goal: Stub returns dependents; create patient persists RelatedPerson
+
+  - id: hie-dep-3-registration-ui
+    spec: specs/features/his-global-south/hie-dep-3-registration-ui.md
+    status: implemented
+    depends_on: [hie-dep-2-hie-stub-dependents]
+    goal: HIE choice dialog + submit related_person
+
+  - id: hie-dep-4-display-tests
+    spec: specs/features/his-global-south/hie-dep-4-display-tests.md
+    status: implemented
+    depends_on: [hie-dep-3-registration-ui]
+    goal: Patient detail + tests

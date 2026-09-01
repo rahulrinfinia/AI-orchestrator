@@ -1,17 +1,19 @@
-# Repository manifest — projects cloned into projects/ (gitignored in hub)
-#
-# Modular monolith: one git repo at projects/<name>/
-#   UI:   projects/<name>/src/
-#   API:  projects/<name>/backend/
-#
-# Setup: .\scripts\setup.ps1
+# Repository manifest
+# Project key (name) drives all hub paths: docs/architecture/<name>.md, specs/features/<name>/, etc.
 
 projects:
-  - name: ipd
-    repo: https://github.com/rahulrinfinia/IPD.git
-    branch: main
+  - name: his-global-south
+    repo: https://github.com/apeiro-care/his-global-south.git
+    branch: develop
     type: modular-monolith
-    product: ipd
+    product: flowmd
     layout:
       frontend: .
       backend: backend/
+    features:
+      - ipd
+    ipd:
+      backend_module: backend/src/modules/ipd/
+      frontend_pages: src/pages/ipd/
+      frontend_module: src/modules/ipd/
+      frontend_services: src/services/ipd-*.service.ts

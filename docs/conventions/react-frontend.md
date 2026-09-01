@@ -10,6 +10,7 @@ Apply in `projects/<name>/src/`. All implementations MUST follow these patterns.
 - **App uses camelCase** — transform only in the API client
 - **Server state** — React Query for API data; local state for UI only
 - **Accessible by default** — WCAG 2.1 AA target
+- **Constants placement** — feature/page constants → `features/<domain>/constants.ts` or `pages/<domain>/constants.ts`; shared/global (query keys, app routes used everywhere) → `src/lib/` or app config. Do not put module-only literals in global lib.
 
 ## Directory structure
 
@@ -166,7 +167,7 @@ Test behavior, not implementation:
 ## Security (frontend)
 
 - Never store PHI in `localStorage` or `sessionStorage`
-- Auth session via httpOnly cookie (Better Auth)
+- Auth via JWT bearer; token held in memory on SPA (FlowMD LLD §5)
 - Sanitize user HTML if rendering rich text (DOMPurify)
 - No secrets in frontend bundle
 

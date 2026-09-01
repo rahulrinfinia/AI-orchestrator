@@ -57,7 +57,17 @@ Use checklist: [`templates/new-project-checklist.md`](templates/new-project-chec
 
 **Architecture structure:** [`architecture/STRUCTURE.md`](architecture/STRUCTURE.md) (12 sections).
 
-**Do not** merge new product into `architecture/ipd.md` — one file per product.
+**Do not** merge new product into another project's architecture doc — one file per `repos.yaml` name.
+
+Example for this hub:
+
+```text
+docs/architecture/his-global-south.md
+docs/decisions/his-global-south/
+prd/his-global-south/ipd/
+specs/features/his-global-south/
+projects/his-global-south/
+```
 
 ---
 
@@ -126,7 +136,7 @@ Implement only after plan approval — and only when you are ready to work in `p
 
 - Reuse conventions
 - Copy IPD ADRs if decisions match, or write new ones in `docs/decisions/<name>/`
-- Copy `.cursor/rules/` from `projects/ipd/`
+- Copy `.cursor/rules/` from `projects/his-global-south/`
 
 ### Different stack (e.g. Django, Angular)
 
@@ -140,17 +150,13 @@ Implement only after plan approval — and only when you are ready to work in `p
 
 ```text
 ai-orchestrator-workspace/
-├── repos.yaml                    ← all projects listed
-├── projects/ipd/, projects/flowmd/, ...
-├── docs/architecture.md          ← index table
-├── docs/architecture/ipd.md
-├── docs/architecture/flowmd.md
-├── docs/services/ipd.md
-├── docs/services/flowmd.md
-├── docs/decisions/ipd/
-├── docs/decisions/flowmd/
-├── prd/ipd/, prd/flowmd/
-└── specs/features/ipd/, specs/features/flowmd/
+├── repos.yaml
+├── projects/his-global-south/, projects/<other>/, ...
+├── docs/architecture.md
+├── docs/architecture/his-global-south.md
+├── docs/decisions/his-global-south/
+├── prd/his-global-south/ipd/
+└── specs/features/his-global-south/
 ```
 
 ---

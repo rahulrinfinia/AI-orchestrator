@@ -1,11 +1,7 @@
 # Per-project service docs
 
-One file per cloned app under `projects/<name>/`.
+| Project key | Doc |
+|-------------|-----|
+| his-global-south | [his-global-south.md](his-global-south.md) |
 
-| Project | Doc |
-|---------|-----|
-| ipd | [ipd.md](ipd.md) |
-
-When you add a project: create `<name>.md` and run **project-discovery**.
-
-Architecture HLD: `docs/architecture/<name>.md`
+Architecture: [architecture/his-global-south.md](../architecture/his-global-south.md)

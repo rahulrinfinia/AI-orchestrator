@@ -1,89 +1,41 @@
-# AI Orchestrator Workspace — Agent Entry
+# AI Orchestrator — Agent Entry
 
-You are working in the **central planning hub**, not inside an application repo.
+**Default project:** `his-global-south`  
+**Default feature (current work):** `ipd`
 
-## Before any work
+**Claude Code:** see [CLAUDE.md](CLAUDE.md) — same rules as Cursor below.
 
-1. Read `docs/how-it-works.md` if unfamiliar with this hub.
-2. Read `repos.yaml` — which projects exist under `projects/`?
-3. Read `docs/architecture.md` and `docs/conventions/` for the target stack.
-4. All **plans** live here (`prd/`, `specs/`). All **code changes** happen in `projects/<name>/` (cloned monolith repo).
+## Cursor rules (always apply for HIS work)
 
-## Orchestrator skill
+1. [.cursor/rules/his-implement-before-code.mdc](.cursor/rules/his-implement-before-code.mdc) — constants, types, schemas, layout
+2. [.cursor/rules/his-pr-review-lessons.mdc](.cursor/rules/his-pr-review-lessons.mdc) — PR #47 review bar (response schemas, AJV messages, registration guards)
+3. [.cursor/rules/his-match-ci-before-done.mdc](.cursor/rules/his-match-ci-before-done.mdc) — lint + `tsc -b` before done
+4. [.cursor/rules/no-git-without-explicit-approval.mdc](.cursor/rules/no-git-without-explicit-approval.mdc) — no commit/push unless asked
+5. [.cursor/rules/no-frontend-heavy-lifting.mdc](.cursor/rules/no-frontend-heavy-lifting.mdc) — counts/aggregates server-side, not in React
 
-For new features, use **`feature-orchestrator`**. It enforces human approval gates:
+## PR review (his-global-south)
 
-| Phase | Output | Gate |
-|-------|--------|------|
-| Intake | `prd/<project>/ticket.md` | — |
-| PRD | `prd/<project>/prd.md` | **Human approves** |
-| Technical design | `prd/<project>/technical-design.md` | **Human approves** |
-| Decompose | `prd/<project>/slices/` | **Human approves** |
-| Plan slice | `specs/features/<project>/slice-N-*.md` | **Human approves** |
-| Implement | Branch + PR in `projects/<project>/` | Human PR review |
-| Report | `reports/features/...` | — |
+Use **[.cursor/skills/his-pr-review/SKILL.md](.cursor/skills/his-pr-review/SKILL.md)** — covers all Cursor + Claude rules, PR #47 bar, and [PR review checklist](docs/templates/his-pr-review-checklist.md). Prefer over generic `code-review` for this project.
 
-**Never run implement phase until the plan file contains an approved `## Approval` section.**
+Author self-check first: [.cursor/skills/pre-review/SKILL.md](.cursor/skills/pre-review/SKILL.md).
 
-Standalone equivalents: **`prd`**, **`technical-design`**, **`decompose-slices`**, **`plan-slice`**, **`implement-slice`**.
+## Before any IPD implement step
 
-## Project layout (modular monolith)
+1. [his-global-south.md](docs/architecture/his-global-south.md) — project architecture
+2. [his-global-south-patterns.md](docs/conventions/his-global-south-patterns.md) — code patterns
+3. Slice spec: `specs/features/his-global-south/ipd-slice-N-*.md` with **Approval** filled
+4. Clone: `projects/his-global-south/` per [repos.yaml](repos.yaml)
+5. Status: [prd/his-global-south/ipd/slices/status.yaml](prd/his-global-south/ipd/slices/status.yaml)
 
-```text
-projects/<name>/
-├── src/                 ← React (Vite) — frontend
-├── backend/src/modules/ ← Fastify — domain modules
-├── backend/src/db/migrations/
-└── e2e/
-```
-
-One vertical slice = one PR touching backend + frontend + migrations + tests when needed.
-
-## All skills
-
-| Category | Skills |
-|----------|--------|
-| Feature flow | `feature-orchestrator`, `prd`, `technical-design`, `decompose-slices`, `plan-slice`, `implement-slice`, `feature` |
-| Work types | `bug`, `chore` |
-| Stories | `create-stories`, `user-stories` |
-| Testing | `test-plan`, `test-implement`, `test-plan-integration`, `test-plan-contracts` |
-| Review | `pre-review`, `code-review`, `pr-review`, `pr-review-implement` |
-| Docs | `project-discovery`, `drift`, `contracts`, `journey`, `changelog`, `architecture` |
-| Decisions | `architecture-decision`, `architecture-decision-record` |
-| Conventions | `convention-loader` — load relevant rules before coding |
-
-## Key rules
-
-- Before implement: run **`convention-loader`** with files from the plan.
-- Spec is source of truth — implementation must match the approved plan.
-- Slice 1 = tracer bullet (thinnest end-to-end path).
-- Do not re-decide architecture in plan-slice — technical design AD-N items are constraints.
-- After implement: **`pre-review`** → PR → **`code-review`**; write report under `reports/`.
-- After clone: run **`project-discovery`** → `docs/services/<project>.md`.
-- Periodically: **`drift`** to catch stale docs.
-
-## Commands (human)
+## Workflow
 
 ```text
-"Run feature-orchestrator for flowmd — Jira PROJ-123"
-"Bug: login 500 on projects/flowmd"
-"Chore: upgrade vitest in flowmd"
-"test-plan flowmd backend auth module"
-"project-discovery flowmd"
-"drift flowmd"
+Approve slice spec → implement in projects/his-global-south/ → PR to develop
+→ update prd/his-global-south/ipd/slices/status.yaml → reports/
 ```
 
-## Review loop
+**Never implement without approved slice spec. Never modify OPD modules for IPD work.**
 
-| Skill | Who | Example |
-|-------|-----|---------|
-| `pre-review` | Author | before opening PR |
-| `code-review` | Reviewer | `code-review flowmd PR #12` |
-| `pr-review` | Author | `pr-review flowmd PR #12` |
-| `pr-review-implement` | Author | apply review plan |
+## Adding another project later
 
-Reports: `reports/code-reviews/`, `reports/pr-reviews/`
-
-## Adding a project
-
-See `docs/adding-a-project.md`.
+See [adding-a-project.md](docs/adding-a-project.md) — new row in `repos.yaml` + new `docs/architecture/<name>.md`.

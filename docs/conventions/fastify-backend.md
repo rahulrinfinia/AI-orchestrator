@@ -2,14 +2,19 @@
 
 Apply in `projects/<name>/backend/`. All implementations MUST follow these patterns.
 
+**IPD (his-global-south):** Drizzle — [ADR 0007](../decisions/his-global-south/0007-drizzle-pgschema-data-access.md) and [his-global-south-patterns.md](his-global-south-patterns.md).
+
+**Legacy separate-repo IPD:** Prisma docs removed (ADR 0005 deleted).
+
 ## Principles
 
 - **Functional modules** — no class-based controllers; thin routes, fat `service.ts`
 - **Layered flow** — `routes → handlers → service → db`
 - **Validate at boundary** — Zod on every request body, query, and params
-- **SQL in service only** — parameterized queries; never in routes/handlers
+- **DB access in service only** — Prisma Client (IPD) or parameterized SQL; never in routes/handlers
 - **Wire format** — JSON responses use **snake_case** keys
 - **One domain per module** — e.g. `admissions`, `beds`, `discharge`
+- **Constants placement** — module-specific → `<module>.constants.ts` inside the module; shared/global → `backend/src/config/constants.ts` or `env.ts` (env vars only). Do not centralize domain literals used by a single module.
 
 ## Module structure
 
@@ -18,14 +23,14 @@ backend/src/
 ├── app.ts                 # register plugins + modules
 ├── server.ts              # listen
 ├── plugins/
-│   ├── auth.ts            # Better Auth session verification
+│   ├── auth.ts            # JWT verification + Redis validation cache
 │   ├── error-handler.ts   # global error envelope
-│   └── db.ts              # Postgres pool
+│   └── prisma.ts          # Prisma Client (IPD) — or db.ts for pg-only projects
 └── modules/<domain>/
     ├── index.ts           # Fastify plugin export
     ├── routes.ts          # route registration only (≤150 lines)
     ├── handlers.ts        # parse request, call service, map response
-    ├── service.ts         # business logic + SQL (≤400 lines)
+    ├── service.ts         # business logic + Prisma (≤400 lines)
     ├── schemas.ts         # Zod schemas
     ├── constants.ts
     ├── types.ts
@@ -178,10 +183,10 @@ request.log.info({ user_id: userId, admission_id: id }, "admission created");
 
 ## Auth
 
-- Better Auth session cookie on protected routes
-- `preHandler: [app.authenticate]` on every non-public route
-- Check role/permission in handler or dedicated `authorize()` helper
-- See ADR `docs/decisions/ipd/0002-better-auth-session-auth.md`
+- **his-global-south:** Better Auth — [ADR 0008](../decisions/his-global-south/0008-better-auth-session-cookie.md); `withOrgAuth`
+- **Generic / greenfield apps:** JWT bearer on protected routes; Redis cache optional
+- `preHandler` on every non-public route
+- Check role/permission in handler or dedicated helper
 
 ## Migrations
 

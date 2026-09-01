@@ -1,81 +1,27 @@
-# AI Orchestrator Workspace
-
-Central hub for AI-driven product delivery — same role as platform-workspace, adapted for **Cursor**, **modular monolith apps**, and **human approval gates**.
-
-This repo does **not** track application source code. Each product lives in its own git repo, cloned into `projects/`.
-
-## Quick start
-
-```powershell
-cd C:\projects\ai-orchestrator-workspace
-
-# 1. Register a project in repos.yaml, then:
-.\scripts\setup.ps1
-
-# 2. Open this folder in Cursor. Start a feature:
-#    "Run feature-orchestrator for <project> — Jira PROJ-123 + Figma link"
-```
-
-## Layout
-
-| Path | Purpose |
-|------|---------|
-| `AGENTS.md` | Entry point for Cursor agents |
-| `repos.yaml` | Projects to clone into `projects/` |
-| `prd/` | PRD, technical design, slices, design intake |
-| `specs/` | Implementation plans (features, bugs, tests, pr-reviews) |
-| `reports/` | Audit trail after implement / review / test |
-| `docs/` | Architecture, conventions, templates |
-| `projects/` | Cloned app repos (gitignored) |
-| `.cursor/skills/` | Full skill set — parity with platform-workspace, adapted for monolith + Cursor |
-| `docs/services/` | Per-app discovery docs |
-| `docs/contracts/`, `docs/journeys/`, `docs/decisions/` | Contracts, journeys, ADRs |
-
-## Workflow (with human gates)
-
-```text
-Jira + Figma
-  → PRD (approve)
-  → Technical design (approve)
-  → Decompose slices (approve)
-  → Plan slice N (approve)
-  → Implement in projects/<name>/ + tests + PR
-  → Code review → PR feedback → merge
-  → Next slice
-```
-
-## Modular monolith app layout (each cloned project)
-
-```text
-projects/flowmd/
-├── src/              ← React SPA (repo root)
-├── backend/          ← Fastify API
-├── e2e/
-└── docker-compose.dev.yml
-```
-
-Frontend and backend deploy independently via path-based CI — same repo, separate artifacts.
-
-## Skills (all in `.cursor/skills/`)
-
-| Category | Skills |
-|----------|--------|
-| **Feature flow** | `feature-orchestrator`, `prd`, `technical-design`, `decompose-slices`, `plan-slice`, `implement-slice`, `feature` |
-| **Work types** | `bug`, `chore` |
-| **Stories** | `create-stories`, `user-stories` |
-| **Testing** | `test-plan`, `test-implement`, `test-plan-integration`, `test-plan-contracts` |
-| **Review** | `pre-review`, `code-review`, `pr-review`, `pr-review-implement` |
-| **Docs & drift** | `project-discovery`, `drift`, `contracts`, `journey`, `changelog`, `architecture` |
-| **Decisions** | `architecture-decision`, `architecture-decision-record` |
-| **Conventions** | `convention-loader` |
-
-One modular monolith per `projects/<name>/`.
-
-## Docs
-
-- **[Step-by-step guide](docs/step-by-step.md)** — numbered workflows (start here)
-- [AI-driven development](docs/ai-driven-development.md) — what it is and why
-- [How it works](docs/how-it-works.md) — folders, skills, commands
-- [Platform parity](docs/platform-parity.md) — how this maps to platform-workspace
-- [Adding a project](docs/adding-a-project.md)
-- [Onboarding a new project](docs/onboarding-new-project.md)
+# AI Orchestrator Workspace
+
+Planning hub for **his-global-south** (FlowMD + embedded IPD).
+
+## Project resolution
+
+| Key | Meaning |
+|-----|---------|
+| **`his-global-south`** | Git repo / clone (`repos.yaml` `name`) |
+| **`ipd`** | Feature epic under that repo |
+
+```text
+projects/his-global-south/              ← code
+docs/architecture/his-global-south.md   ← project architecture
+specs/features/his-global-south/        ← slice plans (ipd-slice-*.md)
+prd/his-global-south/ipd/               ← feature PRD + status
+docs/decisions/his-global-south/          ← ADRs
+```
+
+## Quick start
+
+1. `.\scripts\setup.ps1` → clone `projects/his-global-south/`
+2. Read [docs/architecture/his-global-south.md](docs/architecture/his-global-south.md)
+3. Approve [specs/features/his-global-south/ipd-slice-0-scaffold.md](specs/features/his-global-south/ipd-slice-0-scaffold.md)
+4. Implement in clone
+
+See [AGENTS.md](AGENTS.md).

@@ -1,20 +1,22 @@
-# PRD projects
+# PRD folders
 
-Each product or initiative gets a folder:
+**Project-keyed:** `prd/<project>/`
+
+Current:
 
 ```text
-prd/<project-name>/
-├── ticket.md              ← pasted Jira / intake notes
-├── prd.md                 ← product requirements (human-approved)
-├── technical-design.md    ← architecture decisions AD-1… (human-approved)
-├── jira-mapping.md        ← optional: US-N ↔ JIRA keys
-├── design/
-│   ├── figma-links.md
-│   └── screenshots/
-└── slices/
-    ├── status.yaml        ← machine-readable slice progress
-    ├── README.md          ← overview + dependency graph
-    └── slice-N.md
+prd/his-global-south/ipd/
+├── design/sources.md
+└── slices/status.yaml
+
+prd/his-global-south/lab-send-out-vendors/
+├── prd.md
+├── technical-design.md
+├── ticket.md
+└── slices/          # LSO-1 … LSO-4
 ```
 
-Start with `feature-orchestrator` skill or copy templates from `docs/templates/`.
+Mirror in hub docs: `docs/features/his-global-south/lab-send-out-vendors/`
+Mirror in app clone: `projects/his-global-south/docs/lab-send-out-vendors/`
+
+Feature subfolders (`ipd/`) sit under the project key — not at repo root.

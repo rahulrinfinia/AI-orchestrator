@@ -3,7 +3,7 @@
 **File:** `docs/architecture/<product>.md` (one per project)  
 **Index:** `docs/architecture.md` (short table of all products)  
 **Template:** [`../templates/project-architecture.md`](../templates/project-architecture.md)  
-**Example:** [ipd.md](ipd.md)
+**Example:** [his-global-south.md](his-global-south.md)
 
 ---
 
@@ -26,7 +26,7 @@
 | 2 | **Purpose** | 1–2 paragraphs: product + users | Full requirements → PRD |
 | 3 | **System context** | Mermaid: users → app → external systems | — |
 | 4 | **Containers** | SPA, API, DB + deploy split | CI yaml → app repo |
-| 5 | **Domain modules** | Table: domain ↔ `modules/` ↔ `features/` | File list → folder-structure.md |
+| 5 | **Domain modules** | Table: domain ↔ backend module ↔ frontend pages | File list → his-global-south-patterns.md |
 | 6 | **Data (high level)** | Entity names + owning module | Columns/SQL → migrations + TD |
 | 7 | **API** | Base `/api`, auth, wire format | Schemas → contracts/ |
 | 8 | **Security** | PHI, audit, links to hipaa.md | Checklist detail → conventions/ |
@@ -82,7 +82,7 @@ Full checklist: [new-project-checklist.md](../templates/new-project-checklist.md
 
 ```text
 architecture skill for ipd
-Update docs/architecture/ipd.md after ADR 0005
+Update docs/architecture/his-global-south.md when ADRs change
 ```
 
 Before implement: read product architecture + run **convention-loader**.

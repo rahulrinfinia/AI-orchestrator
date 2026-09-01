@@ -1,0 +1,60 @@
+# Slice status — his-global-south / ipd-admissions (ATD)
+
+project: his-global-south
+feature: ipd-admissions
+base_branch: develop
+branch: feat/ipd-admissions-atd
+gate_g1: pending
+gate_g2: pending
+
+slices:
+  - id: ipd-admissions-adm-0-sidebar-nav
+    spec: specs/features/his-global-south/ipd-admissions-adm-0-sidebar-nav.md
+    status: planned
+    plan_ready: true
+    branch: feat/ipd-admissions-atd
+    depends_on: [ipd-slice-0-scaffold]
+    goal: Sidebar IPD collapsible with Overview + ATD; /ipd/v1/* router; ATD placeholder page
+
+  - id: ipd-admissions-adm-1-api
+    spec: specs/features/his-global-south/ipd-admissions-adm-1-api.md
+    status: planned
+    plan_ready: true
+    branch: feat/ipd-admissions-atd
+    depends_on: [ipd-admissions-adm-0-sidebar-nav]
+    goal: GET/POST/PATCH /api/v1/ipd/admissions over visit_admissions
+
+  - id: ipd-admissions-adm-2-ui-list-detail
+    spec: specs/features/his-global-south/ipd-admissions-adm-2-ui-list-detail.md
+    status: planned
+    plan_ready: true
+    branch: feat/ipd-admissions-atd
+    depends_on: [ipd-admissions-adm-1-api]
+    goal: ATD list filters + detail page + New admission button
+
+  - id: ipd-admissions-adm-3-ui-new-admission
+    spec: specs/features/his-global-south/ipd-admissions-adm-3-ui-new-admission.md
+    status: planned
+    plan_ready: true
+    branch: feat/ipd-admissions-atd
+    depends_on: [ipd-admissions-adm-2-ui-list-detail]
+    goal: Patient search + register redirect + walk-in create form
+
+  - id: ipd-admissions-adm-4-bed-assign
+    spec: specs/features/his-global-south/ipd-admissions-adm-4-bed-assign.md
+    status: planned
+    plan_ready: true
+    branch: feat/ipd-admissions-atd
+    depends_on: [ipd-admissions-adm-2-ui-list-detail]
+    goal: Assign bed dialog wired to POST /api/platform/beds/:id/admit
+
+  - id: ipd-admissions-adm-5-tests
+    spec: specs/features/his-global-south/ipd-admissions-adm-5-tests.md
+    status: planned
+    plan_ready: true
+    branch: feat/ipd-admissions-atd
+    depends_on:
+      - ipd-admissions-adm-1-api
+      - ipd-admissions-adm-3-ui-new-admission
+      - ipd-admissions-adm-4-bed-assign
+    goal: Backend + frontend tests + implementation report

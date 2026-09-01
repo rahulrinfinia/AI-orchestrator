@@ -1,0 +1,48 @@
+# Slice status — his-global-south / lab-send-out-vendors
+
+project: his-global-south
+feature: lab-send-out-vendors
+epic: null
+base_branch: develop
+branch: feat/lab-send-out-vendors
+
+slices:
+  lso-1:
+    title: Lab vendor master — API + super_admin UI
+    status: pending
+    plan_ready: false
+    depends_on: []
+    spec: prd/his-global-south/lab-send-out-vendors/slices/slice-1.md
+    branch: feat/lab-send-out-vendors
+    pr: null
+    merged_at: null
+
+  lso-2:
+    title: Vendor on send-out orders + tracker status
+    status: pending
+    plan_ready: false
+    depends_on: [lso-1]
+    spec: prd/his-global-south/lab-send-out-vendors/slices/slice-2.md
+    branch: feat/lab-send-out-vendors
+    pr: null
+    merged_at: null
+
+  lso-3:
+    title: Barcode generate, print, lookup
+    status: pending
+    plan_ready: false
+    depends_on: [lso-2]
+    spec: prd/his-global-south/lab-send-out-vendors/slices/slice-3.md
+    branch: feat/lab-send-out-vendors
+    pr: null
+    merged_at: null
+
+  lso-4:
+    title: PDF report upload + history + viewer
+    status: pending
+    plan_ready: false
+    depends_on: [lso-3]
+    spec: prd/his-global-south/lab-send-out-vendors/slices/slice-4.md
+    branch: feat/lab-send-out-vendors
+    pr: null
+    merged_at: null
