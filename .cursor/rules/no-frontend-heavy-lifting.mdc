@@ -1,0 +1,40 @@
+---
+description: Compute/derive/aggregate server-side — never push heavy lifting onto the frontend
+alwaysApply: true
+---
+
+# Backend does the heavy lifting, not the frontend
+
+Counts, aggregations, joins, and derived/computed fields belong in the backend (SQL or service layer) — not fetched as raw data and computed client-side in a React component or hook. Pushing that work to the frontend makes the UI slower and duplicates logic that the backend can express once, correctly, in the query.
+
+## Do
+
+```ts
+// ✅ Backend computes/aliases the derived field once, in the query layer
+// (see shapeVisitListRow() deriving encounter_type from visit_type)
+return {
+  ...visit,
+  encounter_type: visit.visit_type ?? visit.encounter_type,
+};
+```
+
+```ts
+// ✅ Backend aggregates counts via SQL, frontend just renders them
+availableBeds: sql<number>`(SELECT count(*) FROM beds b WHERE b.unit_id = ${units.id} AND b.status = 'available')`,
+```
+
+## Do not
+
+```tsx
+// ❌ Fetching all rows and counting/deriving in the frontend
+const availableBeds = beds.filter(b => b.status === 'available').length;
+const isEmergency = visit.visitType === 'emergency'; // derived client-side because backend didn't already alias it
+```
+
+## Applies to
+
+- Any count, sum, or aggregate a list/detail view needs.
+- Any field one endpoint computes/aliases (e.g. a list endpoint) that a sibling endpoint (e.g. a single-item detail endpoint) also needs — add it there too, don't leave the frontend to re-derive it from a different raw field.
+- Cross-entity summaries and joins.
+
+Exception: genuinely per-viewer/ephemeral UI state (collapsed sections, local filters, draft form values) — that's fine client-side, it isn't domain data.

@@ -1,0 +1,33 @@
+---
+description: After HIS code changes, run the same lint + tsc CI runs. Vite/dev/tests are not enough.
+alwaysApply: true
+---
+
+# HIS — match CI before you say done
+
+GitHub **Frontend — ESLint + tsc** (`ci-develop.yml`) fails on `npx tsc -b`, not on `npm run dev` or Vitest. Tightening unions (`Gender`, document types) will compile in Vite and still fail CI.
+
+## Why this exists
+
+Agents previously shipped registration/refactor work after tests or a smoke run. Call sites still used `.toLowerCase()`, `?? ''`, or `useState(literal)`, which widen to `string`. CI was the first full project typecheck.
+
+## Before declaring implement / fix / refactor complete
+
+In `projects/his-global-south/` (not the hub repo):
+
+| You changed | Must run (same as CI) | Fail = not done |
+|---|---|---|
+| `src/**` | `npm run lint` then `npx tsc -b` | Any `TS2322` / `TS2345` / `TS2300` |
+| `backend/**` | `npm run build` in `backend/` | Backend tsc errors |
+
+Do **not** treat `vite`, the running app, or unit tests as a substitute.
+
+## After tightening constants / unions
+
+If you change `*_VALUES`, `Gender`, or payload types, grep call sites for `.toLowerCase()`, `?? ''`, `z.string()`, and untyped `useState(CONSTANT)`. Narrow with `toX()` in `*.mapping.ts` — do not pass raw `string` into `setValue` / API payloads.
+
+## Do not
+
+- Say “ready to push / PR / merge” until the matching CI commands are green locally.
+- Skip `tsc -b` because “the page loads.”
+- Commit or push unless the user explicitly asks.

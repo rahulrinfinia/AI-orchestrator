@@ -27,7 +27,7 @@ Extract and apply **only** the conventions needed for the current work.
 | API routes or client | `docs/conventions/api-design.md` |
 | PHI/patient/admission domains | `docs/conventions/hipaa.md` |
 | Any code | `docs/conventions/modular-monolith-fastify-react.md` (index) |
-| New module or feature | `docs/conventions/folder-structure.md` |
+| New module or feature | `docs/conventions/his-global-south-patterns.md` (IPD) |
 | Tests | `docs/test/testing-strategy.md` |
 | Decisions | `docs/decisions/<project>/` — scan for Accepted ADRs |
 

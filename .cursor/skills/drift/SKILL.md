@@ -1,6 +1,6 @@
 ---
 name: drift
-description: Compares docs/services/ and specs/ against actual code in projects/. Reports stale documentation and spec drift.
+description: Compares docs/services/ and specs/ against actual code in backend/. Reports stale documentation and spec drift.
 ---
 
 # Drift Check

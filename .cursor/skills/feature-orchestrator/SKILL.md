@@ -1,11 +1,11 @@
 ---
 name: feature-orchestrator
-description: Runs the full AI delivery pipeline for a cloned modular-monolith project with mandatory human approval gates. Use when the user provides Jira, Figma, or a feature request for a project under projects/, or asks to run the orchestrator, start a PRD, or deliver a feature slice-by-slice.
+description: Runs the full AI delivery pipeline for a cloned modular-monolith project with mandatory human approval gates. Use when the user provides Jira, Figma, or a feature request for a project under backend/, or asks to run the orchestrator, start a PRD, or deliver a feature slice-by-slice.
 ---
 
 # Feature Orchestrator
 
-Central workflow for this hub. Code changes only in `projects/<name>/`; plans in `prd/` and `specs/`.
+Central workflow for this hub. Code changes only in `backend/<name>/`; plans in `prd/` and `specs/`.
 
 ## Hard rules
 
@@ -21,7 +21,7 @@ Run in order. Stop at each gate.
 
 ### Phase 0 — Verify project
 
-- Read `repos.yaml` and confirm `projects/<name>/` exists (or tell user to run `scripts/setup.ps1`).
+- Read `repos.yaml` and confirm `backend/<name>/` exists (or tell user to run `scripts/setup.ps1`).
 - Create `prd/<name>/design/` for Figma links and screenshots.
 
 ### Phase 1 — Intake

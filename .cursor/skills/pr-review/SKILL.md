@@ -16,7 +16,7 @@ PR URL or number + project name (`flowmd`).
 ### 1. Fetch comments
 
 ```bash
-cd projects/<name>
+cd backend/<name>
 gh pr view <N> --json number,title,body,headRefName,reviews,comments
 gh api repos/{owner}/{repo}/pulls/<N>/comments
 ```
@@ -38,7 +38,7 @@ Read spec + `prd/<project>/technical-design.md` for defend decisions.
 
 ### 4. Monolith self-check (even if reviewer missed)
 
-Grep changed files in `projects/<name>/`:
+Grep changed files in `backend/<name>/`:
 
 - SQL outside `service.ts`
 - `snake_case` on frontend API reads
@@ -61,7 +61,7 @@ Plan includes:
 - **Each comment:** quote, analysis, action, draft reply to reviewer
 - Files to modify
 - Step-by-step fix tasks
-- Validation commands (`cd projects/<name>`, `npm test`, `tsc -b`, vitest paths)
+- Validation commands (`cd backend/<name>`, `npm test`, `tsc -b`, vitest paths)
 - Defense arguments for Will Defend (reference spec path)
 
 **STOP.** User reviews plan before `pr-review-implement`.

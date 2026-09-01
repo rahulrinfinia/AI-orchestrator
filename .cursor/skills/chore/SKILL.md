@@ -11,11 +11,11 @@ Output: `specs/chores/<short-name>.md`
 
 - State explicitly: **no behavior change** unless user allows
 - Same validation as before (lint, tsc, tests green)
-- Work in `projects/<project>/`
+- Work in `backend/<project>/`
 
 ## Process
 
-1. Read conventions + affected code in `projects/<project>/`
+1. Read conventions + affected code in `backend/<project>/`
 2. Write plan: goal, files, steps, validation commands, rollback note
 3. Approval block required before implement
 

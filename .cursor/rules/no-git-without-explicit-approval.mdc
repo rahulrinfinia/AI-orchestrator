@@ -1,0 +1,23 @@
+---
+description: Never commit, push, or open PRs unless the user explicitly asks
+alwaysApply: true
+---
+
+# Git — explicit approval required
+
+**Do not** commit, push, create pull requests, or merge unless the user **explicitly** asks in that conversation (e.g. "commit", "push", "open PR", "create pull request").
+
+## After implement-slice or feature work
+
+1. Implement code in `projects/<name>/` only.
+2. Tell the user what changed and **where files live**.
+3. Stop. Wait for explicit approval before any git write to remote.
+
+## Allowed without asking
+
+- `git status`, `git diff`, `git log` (read-only)
+- Local validation (tests, lint) when implementing
+
+## Not allowed unless user says so
+
+- `git commit`, `git push`, `gh pr create`, force push, amend

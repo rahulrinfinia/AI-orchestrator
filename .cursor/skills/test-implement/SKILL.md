@@ -1,6 +1,6 @@
 ---
 name: test-implement
-description: Implements tests from specs/tests/ plan in projects/. Writes reports/tests/. Use after test-plan is approved or user says implement tests.
+description: Implements tests from specs/tests/ plan in backend/. Writes reports/tests/. Use after test-plan is approved or user says implement tests.
 ---
 
 # Test Implement

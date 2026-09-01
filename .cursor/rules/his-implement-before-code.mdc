@@ -1,0 +1,66 @@
+---
+description: HIS implement-time patterns — constants, types, schemas, module layout. Apply before writing code in projects/his-global-south.
+alwaysApply: true
+---
+
+# HIS — write code this way (before you type)
+
+Default clone: `projects/his-global-south/`. Do not invent a parallel tree. Read this **before** implement-slice / any HIS feature code.
+
+## Constants (one source)
+
+- Domain literals live in `backend/src/modules/<mod>/<feature>/<feature>.constants.ts` as `const` objects **and** `*_VALUES` arrays.
+- Frontend **mirrors** those values in `src/<mod>/constants/<feature>.ts` (e.g. `src/ipd/constants/admissions.ts`). Paths-only file: `src/<mod>/constants/index.ts`.
+- Do **not** put a `constants.ts` inside every feature/page folder. Next feature = `src/ipd/constants/capacity.ts`, not `src/ipd/capacity/constants.ts`.
+- Never hardcode `'open'`, `'walk_in'`, `'all'`, `'age'`, `'date'`, `'definite'`, CHECK arrays, or form option values in service / schema / pgschema / UI / `queryKeys`.
+- Never compare closed sets with raw strings (`dobInputMode === 'age'`, `registrationMode === 'emergency'`, `matchType === 'definite'`). Use `FOO.BAR` / `isX()` helpers from constants. UI-only modes (`age`/`date`, `choose`) are still constants.
+- Do not dump module literals into `backend/src/config/` or `src/lib/` (query keys may *read* feature constants).
+
+## Types
+
+- Unions from constants: `(typeof FOO)[keyof typeof FOO]`. Not loose `string`.
+- Types in `*.types.ts` / `src/<mod>/types/`. **Never export types from a component or service file.**
+- No `Record<string, unknown>` for request/response DTOs or API bodies.
+- Mapping inputs are those unions (or `null`). Narrow DB `string` first (`toOpd…`). Mapping lives in `*.mapping.ts` — **do not re-export from service**.
+
+## API + Drizzle
+
+- Frontend TS = **camelCase**. Wire + backend JSON = **snake_case**. Convert only in `src/integrations/api/client.ts` (`keysToSnake` on POST/PUT/PATCH bodies; `keysToCamel` on GET responses).
+- **Backend services: snake_case wire keys only.** Do not duplicate fields on request bodies or in parsers (e.g. `body.lab_fulfillment_type` **only** — not `body.lab_fulfillment_type ?? body.labFulfillmentType`). Do not add `readXFromBody()` helpers that accept both casings. Fastify `schema` property names = DB/wire = `snake_case`. Drizzle column names = `snake_case`. Frontend components/hooks use `camelCase`; the API client is the sole conversion boundary.
+- Fastify `schema` on **body, querystring, params, and response** (`:id` = `format: uuid`). Enums from `*_VALUES`. `additionalProperties: false`.
+- AJV `errorMessage` strings: **Title Case labels** (`First Name`), not snake_case keys (`first_name`). See `his-pr-review-lessons.mdc`.
+- Drizzle **defaults and CHECKs** from constants. CHECK via `sql.raw` / `textInArrayCheck` — never `${value}` inside `sql\`\`` (becomes a bind param; Postgres rejects it).
+- Selects: `getTableColumns(table)`. Joined rows: `InferSelectModel<typeof table> & { …aliases }`.
+
+## Frontend module layout (IPD and new modules)
+
+```text
+src/ipd/                  # portable root — copy this folder
+  constants/index.ts      # UI + API paths only
+  constants/admissions.ts # domain + UI labels
+  api/  hooks/  types/  pages/  routes.tsx  index.ts
+src/components/ipd/       # reusable controls; types in doctorSelect.types.ts
+src/modules/ipd/index.ts  # export * from '@/ipd'
+```
+
+- UI routes: `/ipd`, `/ipd/admission` (no `/v1` on new screens). API stays `/api/v1/<mod>/…`.
+- If you rename a URL, add legacy `Navigate` redirects.
+- Pages are thin. Data in hooks. Shared pickers in `src/components/<mod>/`.
+- List filter sentinel (`all`) must be **sent** to the API — do not strip it to `undefined` if the service treats missing status as a default (e.g. `open`).
+
+## Patient / identity (when touching registration)
+
+- Org identity profile drives document types and nationality — do not hardcode `national_id` or a country combobox.
+- Emergency vs full registration are separate APIs/flows; completion promotes provisional → full.
+- `complete-registration` only for `registration_mode = emergency` → else `422` `COMPLETION_NOT_PROVISIONAL`.
+- `validateIdentityForWrite`: optional when both ID fields blank; optional chaining only (`identity?.`).
+
+## Before you say done
+
+In `projects/his-global-south/`: `src/**` → `npm run lint` + `npx tsc -b`. `backend/**` → `npm run build` in `backend/`. Same commands as GitHub CI. The running app is not a substitute.
+
+## Do not
+
+- Modify OPD modules for IPD-only work (except additive constants you must extend, e.g. `ADMISSION_TYPE`).
+- Grant new platform roles from hospital Org setup UI.
+- Commit/push unless the user explicitly asks.

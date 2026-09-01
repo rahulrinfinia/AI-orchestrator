@@ -11,13 +11,13 @@ Output: `specs/bugs/<short-name>.md`
 
 - Minimal fix — no refactors unless required
 - Read `docs/conventions/modular-monolith-fastify-react.md`
-- Work will happen in `projects/<project>/` after plan approved
+- Work will happen in `backend/<project>/` after plan approved
 - Include reproduction steps and root cause
 
 ## Process
 
 1. Read `docs/architecture.md`, `docs/services/<project>.md` if exists
-2. Explore `projects/<project>/` — find root cause in code
+2. Explore `backend/<project>/` — find root cause in code
 3. Check `docs/changelog/` for recent related changes
 4. Write plan with: symptoms, expected vs actual, root cause, files to change, test to prevent regression, validation commands
 5. Include `docs/templates/approval.md` block (empty until user approves)
@@ -27,7 +27,7 @@ Output: `specs/bugs/<short-name>.md`
 - Bug description
 - Reproduction steps
 - Root cause analysis
-- Relevant files (under `projects/<project>/`)
+- Relevant files (under `backend/<project>/`)
 - Fix steps (surgical)
 - Testing strategy (regression test required)
 - Validation commands

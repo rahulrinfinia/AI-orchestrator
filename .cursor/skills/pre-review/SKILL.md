@@ -9,7 +9,8 @@ Run in `projects/<project>/` on current branch.
 
 ## Checklist
 
-- [ ] `pnpm lint` / `pnpm typecheck` clean
+- [ ] HIS frontend: `npm run lint` and `npx tsc -b` clean in `projects/his-global-south/` (same as GitHub **Frontend — ESLint + tsc**)
+- [ ] HIS backend: `npm run build` clean in `projects/his-global-south/backend/`
 - [ ] Tests for changed behavior pass
 - [ ] No secrets, console.log debug, or commented-out code
 - [ ] Matches `docs/conventions/modular-monolith-fastify-react.md`

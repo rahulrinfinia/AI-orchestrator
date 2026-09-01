@@ -1,6 +1,6 @@
 ---
 name: project-discovery
-description: Scans a cloned app in projects/ and writes docs/services/<project>.md — routes, modules, DB tables, env vars. Replaces per-microservice services command for modular monolith.
+description: Scans a cloned app in backend/ and writes docs/services/<project>.md — routes, modules, DB tables, env vars. Replaces per-microservice services command for modular monolith.
 ---
 
 # Project Discovery

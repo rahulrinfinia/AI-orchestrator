@@ -1,24 +1,24 @@
 ---
 name: code-review
-description: Performs a rigorous code review of a pull request from a cloned project under projects/, checks against the original spec and conventions, writes reports/code-reviews/, and posts GitHub review. Use when reviewing a PR, before merge, or when the user says code-review, review PR, or paste a PR URL.
+description: Performs a rigorous code review of a pull request from a cloned project under backend/, checks against the original spec and conventions, writes reports/code-reviews/, and posts GitHub review. Use when reviewing a PR, before merge, or when the user says code-review, review PR, or paste a PR URL.
 ---
 
 # Code Review
 
-Review PRs from cloned monolith repos (`projects/<name>/`). Save report in **this hub**; PR lives in the app repo.
+Review PRs from cloned monolith repos (`backend/<name>/`). Save report in **this hub**; PR lives in the app repo.
 
 ## Input
 
 PR URL or number + project name (e.g. `flowmd PR #42`).
 
-Run from hub. Use `gh` inside `projects/<name>/` (that folder is the git root).
+Run from hub. Use `gh` inside `backend/<name>/` (that folder is the git root).
 
 ## Process
 
 ### 1. Fetch PR
 
 ```bash
-cd projects/<name>
+cd backend/<name>
 gh pr view <N> --json number,title,body,headRefName,baseRefName,author,files
 gh pr diff <N>
 ```
@@ -37,7 +37,7 @@ gh pr diff <N>
 
 ### 4. Read full changed files
 
-Read entire files under `projects/<name>/`, not diff only.
+Read entire files under `backend/<name>/`, not diff only.
 
 ### 5. Checklist (every category)
 
@@ -72,7 +72,7 @@ Include: PR info, spec link, verdict (APPROVE / REQUEST CHANGES), findings by se
 ### 8. Post on GitHub (if user asked)
 
 ```bash
-cd projects/<name>
+cd backend/<name>
 gh pr review <N> --request-changes --body "..."   # if BLOCKER/CRITICAL
 gh pr review <N> --approve --body "..."           # if clean
 ```

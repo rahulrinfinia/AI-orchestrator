@@ -86,3 +86,14 @@ Source: PR #50 review fixes on `feat/platform-admin-hospitals`.
 ### AJV messages — don't break existing message-content assertions
 
 - Before rewriting an `errorMessage` to be more human-friendly, grep for existing tests asserting on the *old* message content (e.g. `toMatch(/uuid|format/)`). A `format: uuid` field's custom message should still signal "UUID" if a test already keys off that word — `"X must be a valid UUID"` satisfies both the human-readability bar and the existing test.
+
+---
+
+## LCF-1 / API casing (do not repeat)
+
+Source: lab-catalog-fulfillment slice review.
+
+- **`api/client.ts` is the only casing boundary.** Frontend TS uses camelCase; HTTP JSON uses snake_case via `keysToSnake` / `keysToCamel`.
+- **Backend services read/write wire keys only** — `body.lab_fulfillment_type`, `body.lab_test_catalog_id`. Do **not** add camelCase duplicates on service body types or `foo ?? bar` fallbacks (`labFulfillmentType`, `labTestCatalogId`).
+- **Do not** add `readXFromBody()` helpers that accept both casings unless the handler is called in-process without the API client (rare — document why).
+- DB columns, Drizzle fields, and Fastify schema property names stay **snake_case** and match each other.

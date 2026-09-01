@@ -5,7 +5,7 @@ description: Implements fixes from an approved specs/pr-reviews/ plan, pushes to
 
 # PR Review Implement
 
-Apply `specs/pr-reviews/pr-*.md` plan. Work in `projects/<name>/`.
+Apply `specs/pr-reviews/pr-*.md` plan. Work in `backend/<name>/`.
 
 ## Preconditions
 
@@ -21,7 +21,7 @@ Read plan and linked `specs/features/` or `specs/bugs/` spec.
 ### 2. Checkout PR branch
 
 ```bash
-cd projects/<name>
+cd backend/<name>
 gh pr checkout <N>
 git pull
 ```
@@ -37,11 +37,10 @@ git pull
 Run commands from plan, e.g.:
 
 ```bash
-cd projects/<name>
+# his-global-south — same as .github/workflows/ci-develop.yml
 npm run lint
-npm run test
-cd backend && npm test
 npx tsc -b
+npm run build   # in backend/
 ```
 
 ### 5. Commit + push
@@ -86,6 +85,6 @@ Implement specs/pr-reviews/pr-42-flowmd-slice-1.md
 
 ## Notes
 
-- Do not commit to hub repo — only `projects/<name>/`
+- Do not commit to hub repo — only `backend/<name>/`
 - If fix contradicts approved spec, stop and ask user
 - Mark resolved threads on GitHub when done
