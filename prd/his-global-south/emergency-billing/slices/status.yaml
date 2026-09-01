@@ -1,0 +1,33 @@
+feature: emergency-billing
+project: his-global-south
+prd: ../prd.md
+technical_design: ../technical-design.md
+gate_g1: pending
+gate_g2: pending
+
+slices:
+  eb-1:
+    title: Event plumbing — triage.completed
+    spec: slice-1.md
+    status: planned
+    depends_on: []
+  eb-2:
+    title: Triage fee — TRIAGE-ED receipt line
+    spec: slice-2.md
+    status: planned
+    depends_on: [eb-1]
+  eb-3:
+    title: ED consult fee — CONSULT-EMERGENCY on sign
+    spec: slice-3.md
+    status: planned
+    depends_on: [eb-1]
+  eb-4:
+    title: ED bed fee — BED-ED-* from triage destination
+    spec: slice-4.md
+    status: planned
+    depends_on: [eb-2]
+  eb-5:
+    title: Demo catalog seed + integration smoke
+    spec: slice-5.md
+    status: planned
+    depends_on: [eb-2, eb-3, eb-4]
