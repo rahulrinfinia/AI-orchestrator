@@ -1,0 +1,36 @@
+# Slice status — update after each slice merges
+# status: pending | planned | in_progress | in_review | merged | blocked
+
+project: his-global-south
+feature: encounter-lab-radiology-reports
+updated: 2026-09-05
+
+slices:
+  "1":
+    title: "ELR-1 — Tab shell + released lab tracer"
+    status: in_review
+    spec: specs/features/his-global-south/encounter-lab-radiology-reports-slice-1.md
+    branch: feat/elr-1-reports-tab
+    pr: ""
+    blocked_by: ["diagnostic-results-approval-workflow/2"]
+  "2":
+    title: "ELR-2 — PDF + radiology + sub-tabs"
+    status: in_review
+    spec: specs/features/his-global-south/encounter-lab-radiology-reports-slice-2.md
+    branch: feat/elr-2-reports-pdf-rad
+    pr: ""
+    blocked_by: ["1", "diagnostic-results-approval-workflow/3"]
+  "3":
+    title: "ELR-3 — Signed encounter embed"
+    status: in_review
+    spec: specs/features/his-global-south/encounter-lab-radiology-reports-slice-3.md
+    branch: feat/elr-3-encounter-embed
+    pr: ""
+    blocked_by: ["1"]
+  "4":
+    title: "ELR-4 — Polish + realtime refresh"
+    status: in_review
+    spec: specs/features/his-global-south/encounter-lab-radiology-reports-slice-4.md
+    branch: feat/elr-4-reports-polish
+    pr: ""
+    blocked_by: ["2"]

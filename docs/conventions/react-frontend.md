@@ -2,6 +2,15 @@
 
 Apply in `projects/<name>/src/`. All implementations MUST follow these patterns.
 
+## Function style
+
+Use arrow function syntax (`const foo = (...) => {...}`) instead of the `function`
+keyword (`function foo(...) {...}`) for new or modified code — components, hooks, and
+helpers alike. Exception: hoisting is genuinely required, or you're editing a small
+piece of an existing file that's consistently written with `function` declarations —
+don't do a drive-by full-file rewrite just to convert style. Mirrored per-project, e.g.
+`projects/his-global-south/docs/conventions/function-style-2026-09-03.md`.
+
 ## Principles
 
 - **Feature-first** — code lives in `src/features/<domain>/`, not loose in `components/`

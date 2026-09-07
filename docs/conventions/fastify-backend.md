@@ -2,6 +2,16 @@
 
 Apply in `projects/<name>/backend/`. All implementations MUST follow these patterns.
 
+## Function style
+
+Use arrow function syntax (`const foo = async (...) => {...}`) instead of the
+`function` keyword (`async function foo(...) {...}`) for new or modified code —
+route handlers, service functions, and helpers alike. Exception: hoisting is genuinely
+required, or you're editing a small piece of an existing file that's consistently
+written with `function` declarations — don't do a drive-by full-file rewrite just to
+convert style. Mirrored per-project, e.g.
+`projects/his-global-south/docs/conventions/function-style-2026-09-03.md`.
+
 ## Principles
 
 - **Functional modules** — no class-based controllers; thin routes, fat `service.ts`

@@ -1,0 +1,48 @@
+# Slice status — iam-resource-groups
+
+project: his-global-south
+feature: iam-resource-groups
+updated: 2026-09-06
+
+slices:
+  "1":
+    title: "IAM-1 — Schema + system groups + member tracer"
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+  "2":
+    title: "IAM-2 — Effective access resolver + API"
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+    blocked_by: ["1"]
+  "3":
+    title: "IAM-3 — Resource Groups admin UI"
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+    blocked_by: ["2"]
+  "4":
+    title: "IAM-4 — Backend enforcement (P0 routes)"
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+    blocked_by: ["2"]
+  "5":
+    title: "IAM-5 — Frontend sync (API-driven nav)"
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+    blocked_by: ["2", "3"]
+  "6":
+    title: "IAM-6 — Custom groups + route rollout"
+    status: pending
+    spec: ""
+    branch: ""
+    pr: ""
+    blocked_by: ["4", "5"]
