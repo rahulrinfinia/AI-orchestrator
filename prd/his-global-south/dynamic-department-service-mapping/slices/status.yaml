@@ -1,0 +1,20 @@
+feature: dynamic-department-service-mapping
+project: his-global-south
+created_at: 2026-09-17
+slices:
+  - id: slice-1
+    title: DB Migration & Backend Schema Layer
+    status: completed
+    file: slices/slice-1.md
+  - id: slice-2
+    title: Dynamic Billing & Event Handlers
+    status: completed
+    file: slices/slice-2.md
+  - id: slice-3
+    title: Facility Master Department Config UI
+    status: completed
+    file: slices/slice-3.md
+  - id: slice-4
+    title: Patient Registration & CollectPayment Dialog Integration
+    status: completed
+    file: slices/slice-4.md

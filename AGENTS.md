@@ -61,6 +61,7 @@ One vertical slice = one PR touching backend + frontend + migrations + tests whe
 - After implement: **`pre-review`** → PR → **`code-review`**; write report under `reports/`.
 - After clone: run **`project-discovery`** → `docs/services/<project>.md`.
 - Periodically: **`drift`** to catch stale docs.
+- **Functions style**: All new functions (frontend and backend) **MUST** be arrow functions (`const myFn = (...) => { ... }`). Do not use `function` declarations for new functions.
 
 ## Commands (human)
 
