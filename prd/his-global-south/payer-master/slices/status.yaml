@@ -1,0 +1,38 @@
+# Slice status — update after each slice merges
+# status: pending | planned | in_progress | in_review | merged | blocked
+
+project: his-global-south
+feature: payer-master-tariffs-versioning
+updated: 2026-09-12
+
+slices:
+  "1":
+    title: "PM-1 — Tracer Bullet: Dual Rate Display & Inline Payer Code Crosswalk"
+    status: completed
+    branch: feat/pm-1-rate-crosswalk-table
+    pr: ""
+    blocked_by: []
+  "2":
+    title: "PM-2 — Batch Toolbar: 1-Click Copy Standard Rates & Global Discount %"
+    status: completed
+    branch: feat/pm-2-batch-toolbar
+    pr: ""
+    blocked_by: ["1"]
+  "3":
+    title: "PM-3 — Kenya Statutory Presets: SHA Level 2 & Level 3 Matrix"
+    status: completed
+    branch: feat/pm-3-sha-statutory-presets
+    pr: ""
+    blocked_by: ["1"]
+  "4":
+    title: "PM-4 — Mechanism B: Scheme Versioning (Purana Data Safe)"
+    status: completed
+    branch: feat/pm-4-scheme-versioning
+    pr: ""
+    blocked_by: ["1"]
+  "5":
+    title: "PM-5 — Downstream RCM Claim Generation & E2E Crosswalk"
+    status: completed
+    branch: feat/pm-5-rcm-claim-crosswalk
+    pr: ""
+    blocked_by: ["2", "3", "4"]
