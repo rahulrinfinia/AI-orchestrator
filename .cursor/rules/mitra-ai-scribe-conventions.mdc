@@ -1,0 +1,22 @@
+---
+description: Mitra AI Scribe — camelCase API, Drizzle snake casing, TypeBox responses, arrow functions (when editing projects/mitra-ai-scribe)
+globs: projects/mitra-ai-scribe/**/*
+alwaysApply: false
+---
+
+# Mitra AI Scribe — conventions
+
+When working under `projects/mitra-ai-scribe/`, follow the project rule file and docs:
+
+- `projects/mitra-ai-scribe/.cursor/rules/conventions.mdc`
+- `projects/mitra-ai-scribe/docs/naming-convention.md`
+
+**Not HIS:** API JSON is **camelCase** on the wire (HIS uses snake_case). Do not apply HIS wire-format assumptions to Mitra.
+
+## Quick rules
+
+- PostgreSQL snake_case; TypeScript / JSON camelCase; **no** manual snake↔camel mappers.
+- Drizzle: `casing: 'snake_case'` in client + kit; migrations applied from `backend/src/db/migrations/`.
+- Fastify: TypeBox in `*.schema.ts`; full `schema.response` on every route.
+- **Arrow functions only** for new code (`const fn = () => {}`), including React components and route handlers.
+- Enum/status **values**: snake_case in `*.constants.ts`.
